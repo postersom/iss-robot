@@ -1,0 +1,65 @@
+
+<form method="POST" id="add-setting-form">
+    <fieldset>
+        <div class="row" style="margin-bottom:10px">
+            <div class="col-xs-4" style="text-align:right">
+                <b> Repository : </b>
+            </div>
+            <div class="col-xs-1" style="text-align:left;margin-top:4px">
+                <span id="symbol-msg"></span>
+                <span id="stname-msg"></span>
+            </div>
+            <div class="col-xs-3  batch-text-col">
+                <select class="form-control" id="repo" name="repo">
+                    {% if repo_select %}
+                        <option value="{{ repo_select }}">{{ repo_select }}</option>
+                        {% for i in range(0, len2) %}
+                        <option value="{{ dataproject[i] }}">{{ dataproject[i] }}</option>
+                        {% endfor %}
+                    {% else %}
+                        <option value="">Please select</option>
+                        {% for i in range(0, len2) %}
+                        <option value="{{ dataproject[i] }}">{{ dataproject[i] }}</option>
+                        {% endfor %}
+                    {% endif %}
+                </select>
+            </div>
+        </div>
+
+    </fieldset>
+
+    <div style="text-align:center">
+      
+        </span><br />
+    </div>
+   
+</form>
+
+<script type="text/javascript">
+    $('select').on('change', function() {
+      console.log(this.value);
+      var data = document.getElementById("repo").value = this.value;
+      console.log(data)
+      $("#group").val(data);
+    });
+
+    $('#repo').on('change', function() {
+      console.log(this.value);
+      var data = document.getElementById("repo_select").value = this.value;
+
+          $.ajax({
+              url: "/get_repository",
+              type: "get",
+              data: {proglang: data},
+              success: function(response) {
+                $("#place_for_suggestions").html(response);
+                console.log(response)
+              },
+              error: function(xhr) {
+                //Do Something to handle error
+              }
+            });
+
+        });
+
+</script>

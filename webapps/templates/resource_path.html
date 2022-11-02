@@ -1,0 +1,69 @@
+
+<form method="POST" id="add-setting-form">
+    <fieldset>
+
+        <div class="row" style="margin-bottom:10px">
+            <div class="col-xs-4" style="text-align:right">
+                <b> Tags : </b>
+            </div>
+            <div class="col-xs-1" style="text-align:left;margin-top:4px">
+                <span id="symbol-msg"></span>
+                <span id="stname-msg"></span>
+            </div>
+            <div class="col-xs-3">
+                <select class="form-control" id="tag_list" name="tag_list">
+                    <option value="">Please select</option>
+                    {% if len2 %}
+                        {% for j in range(0, len2) %}
+                        <option value="{{ datatag[j] }}">{{ datatag[j] }}</option>
+                        {% endfor %}
+                    {% endif %}
+                </select>
+            </div>
+        </div>
+
+    </fieldset>
+
+    <div style="text-align:center">
+      
+        </span><br />
+    </div>
+   
+</form>
+
+<script type="text/javascript">
+    $('select').on('change', function() {
+      // document.getElementById("btnSubmit").disabled = true;
+      console.log(this.value);
+      var data = document.getElementById("tag_list").value = this.value;
+      console.log(data)
+      $("#tag").val(data);
+    });
+
+    $(function () {
+  
+
+        $('#tag_list').on('change', function() {
+
+
+            var product = $("#tag");
+            console.log("tag_list")
+
+            document.getElementById("getFile").disabled = false;
+
+            // if (product.val() == "") {
+            //     console.log("tag_lasadist")
+            //     //If the "Please Select" option is selected display error.
+            //     // alert("Please select an option!");
+            //     document.getElementById("btnSubmit").disabled = true;
+
+            //     return false;
+            // }else{
+            //     document.getElementById("btnSubmit").disabled = false;
+            // return true;
+            // }
+            
+        });
+    });
+
+</script>

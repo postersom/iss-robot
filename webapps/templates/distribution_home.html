@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% set active_page = "menu3" %}
+{% block title %}Distribution Server{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+{% block content %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for category, message in messages %}
+<div class="alert alert-{{ category }} alert-dismissible" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+            aria-hidden="true">&times;</span></button>
+    <!-- <strong>Title</strong> --> {{ message }}
+</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
+<h1>Distribution Server</h1>
+<form action="" method="post" onsubmit="" id="add-setting-form">
+    <fieldset>
+        <legend></legend>
+
+        <div class="row" style="margin-bottom:10px">
+            <div class="col-xs-12" style="text-align:center">
+                <h3> Home Dashboard </h3>
+            </div>
+        </div>
+
+        <div style="text-align:center">
+            <span><a class="btn btn-success submitbut" href="/distribution/resource_server/" role="button">Resource Server</a>
+            <span><a class="btn btn-success submitbut" href="/distribution/put_release/" role="button">Put Release</a>
+            <span><a class="btn btn-success submitbut" href="/distribution/zone_release/" role="button">Zone Release</a>
+            <span><a class="btn btn-success submitbut" href="/distribution/purge_release/" role="button">Purge Release</a>
+            <!-- <span><a class="btn btn-success " href="/distribution/test_upload/" role="button">Test Upload</a> -->
+            </span><br />
+        </div>
+
+        <div class="panel panel-default">
+            <!-- Default panel contents -->
+            <table id="report" class="table table-striped table-bordered">
+                <thead>
+                    <tr style="font-size:small">
+                        <th>Test Station</th>
+                        <th>Test Slot</th>
+                        <th>Status</th>
+                        <th>Test Release</th>
+                    </tr>
+                </thead>
+                <tbody id="test">
+                    {% for i in range(0, len1) %}
+                    <tr>
+                        <td class="text-center">{{ station }}</td>
+                        
+                        <td class="text-center">{{ slot[i] }}</td>
+                        <td class="text-center">{{ "-" if slot_status[i] == "empty" else "Zoned" }}</td>
+                        <td class="text-center">{{ slot_status[i] }}</td>
+
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <br>
+        <br>
+
+    </fieldset>
+
+
+
+    <legend> </legend>
+   
+</form>
+
+{% endblock %}
+{% block footer %}
+{{ super() }}
+<script type="text/javascript">
+
+    $(function () {
+        $("#add-setting-form").validate({
+            rules: {
+                chassis_name: {
+                    required: true,
+                    maxlength: 10,
+                    nowhitespace: true
+                },
+                operation: {
+                    required: true,
+                    maxlength: 25
+                },
+                station: {
+                    required: true,
+                    maxlength: 25
+                },
+                slot: {
+                    required: true,
+                    digits: true,
+                    max: 100,
+                    min: 1
+                },
+                interval: {
+                    required: true,
+                    digits: true,
+                    max: 1000000,
+                    min: 1
+                }
+            },
+            messages: {
+                chassis_name: { required: "Please specify Chassis Name", maxlength: "Character not exceed than 10" },
+                operation: { required: "Please specify Operation Name", maxlength: "Character not exceed than 25" },
+                station: { required: "Please specify Station Name", maxlength: "Character not exceed than 25" },
+                slot: "Plase input only number in range 1 - 100",
+                interval: "Plase input only number in range 1 - 1,000,000 (seconds) ",
+            },
+            errorElement: "em",
+            errorPlacement: function (error, element) {
+                // Add the `help-block` class to the error element
+                error.addClass("help-block");
+
+                if (element.prop("type") === "checkbox") {
+                    error.insertAfter(element.parent("label"));
+                } else {
+                    error.insertAfter(element);
+                }
+            },
+            highlight: function (element, errorClass, validClass) {
+                $(element).parents(".col-xs-4").addClass("has-error");
+            },
+            unhighlight: function (element, errorClass, validClass) {
+                $(element).parents(".col-xs-4").removeClass("has-error");
+            }
+        });
+    });
+</script>
+{% endblock %}

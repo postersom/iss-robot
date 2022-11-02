@@ -1,0 +1,271 @@
+{% if messages %}
+{% for category, message in messages %}
+<div class="alert alert-{{ category }} alert-dismissible" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+            aria-hidden="true">&times;</span></button>
+    <!-- <strong>Title</strong> --> {{ message }}
+</div>
+{% endfor %}
+{% endif %}
+<style type="text/css">
+input[name=path] {
+    pointer-events: none;
+ }
+</style>
+
+<form id="prospects_form" target="_blank" action = "http://10.196.66.71:5000/api/upload" method="POST" enctype="multipart/form-data">
+    <div class="row" style="margin-bottom:10px">
+            <div class="col-xs-4" style="text-align:right">
+                <b> Path Upload : </b>
+            </div>
+            <div class="col-xs-1" style="text-align:left;margin-top:4px">
+                <span id="symbol-msg"></span>
+                <span id="stname-msg"></span>
+            </div>
+            <div class="col-xs-3">
+                <!-- <input type="text" id="path" name="" value="../Package/Products/{{product}}/{{rev}}/"
+                    style="width:400px;" class="form-control" disabled=""> -->
+                <!-- <span><p id="get_path">{{path_upload}}/</p></span> -->
+                 <input type = "text" name = "path" id="add_path" style="width:300px;margin-left:10px" class="form-control" value=""/>
+            </div>
+        </div>
+
+        <div class="row" style="margin-bottom:10px">
+
+            <!-- <div class="row" style="margin-bottom:10px"> -->
+            <div class="col-xs-4" style="text-align:right">
+                <b> Product : </b>
+            </div>
+            <div class="col-xs-1" style="text-align:left;margin-top:4px">
+                <span id="symbol-msg"></span>
+                <span id="stname-msg"></span>
+            </div>
+            <div class="col-xs-3">
+                <select class="form-control" id="product" name="product">
+                    <option value="">Please select</option>
+                    {% for i in range(0, len) %}
+                        <option value="{{ product[i] }}" >{{ product[i] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="row" style="margin-bottom:10px">
+
+            <!-- <div class="row" style="margin-bottom:10px"> -->
+            <div class="col-xs-4" style="text-align:right">
+                <b> Package : </b>
+            </div>
+            <div class="col-xs-1" style="text-align:left;margin-top:4px">
+                <span id="symbol-msg"></span>
+                <span id="stname-msg"></span>
+            </div>
+            <div class="col-xs-3">
+                <select class="form-control" id="package_list" name="package_list" disabled="">
+                  <option value="">Please select</option>
+                  <option value="Diag" >Diag</option>
+                  <option value="Images" >Images</option>
+                  <option value="Path_Fix" >Path_Fix</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="place_for_images"></div>
+        <div id="place_for_cpld"></div>
+
+        <div class="row" style="margin-bottom:10px">
+            <div class="col-xs-4" style="text-align:right">
+                <b> Upload File: </b>
+            </div>
+            <div class="col-xs-1" style="text-align:left;margin-top:4px">
+                <span id="symbol-msg"></span>
+                <span id="stname-msg"></span>
+            </div>
+            <div class="col-xs-3">
+                <input type = "file" name = "data"/>
+            </div>
+        </div>
+
+        <div style="display: none;">
+
+            <input name="ck_tag" id="ck_tag" type="hidden"><br>
+
+        </div>
+
+    <div style="text-align:center">
+        <span><button type="submit" id="btnSubmit" class="btn btn-success submitbut" disabled="">Submit</button>
+        <span><a class="btn btn-warning btnCancal" id="btnCancal" href="/distribution/home/" role="button">Cancle / Back</a>
+        <!-- <span><a class="btn btn-success btnReset" id="btnReset" href="" role="button">Reset Value</a> -->
+        <input class="btn btn" id="reset_package" type="reset" value="Reset Select Value" role="button">
+        </span><br />
+    </div>
+    <br />
+
+    
+   
+</form>
+    <div style="text-align:center">
+        <span><a class="btn btn-primary" id="btnCancal" target="_blank" href="/distribution/resource_table/" role="button">Check File</a>
+    </div>
+
+
+<script type="text/javascript">
+
+    $("#package_list option").filter(function() {
+            return $(this).val() == $("#path").val();
+    }).attr('selected', true);
+
+    $("#product").on('change', function() {
+
+        document.getElementById("package_list").disabled = false;
+        document.getElementById("product").disabled = true;
+        document.getElementById("btnSubmit").disabled = false;
+        // $("#path").val($(this).find("option:selected").attr("value"));
+        // $('span > p').append($(this).find("option:selected").attr("value")+'/');
+        // $('#add_path').append($(this).find("option:selected").attr("value"));
+        // $('span > p').append($(this).find("option:selected").attr("value"));
+        // var path = document.getElementById('get_path');
+        // var text = path.textContent;
+        
+        // document.write(text);
+        // console.log("test"+text);
+        // $("#sent_path").val(text);
+
+        var data = document.getElementById("product").value = this.value;
+
+        console.log(this.value);
+        // if (this.value == "Images"){
+        //     $.ajax({
+        //       url: "/get_dropdown_images",
+        //       type: "get",
+        //       data: {proglang: data},
+        //       success: function(response) {
+        //         $("#place_for_images").html(response);
+        //         console.log(response)
+        //       },
+        //       error: function(xhr) {
+        //         //Do Something to handle error
+        //       }
+        //     });
+        // }
+
+        var app_path = this.value
+        $("#add_path").val(function() {
+            return this.value+app_path;
+        });
+
+    });
+
+    $("#package_list").on('change', function() {
+
+        document.getElementById("btnSubmit").disabled = false;
+        document.getElementById("product").disabled = true;
+        document.getElementById("package_list").disabled = true;
+        // $("#path").val($(this).find("option:selected").attr("value"));
+        // $('span > p').append($(this).find("option:selected").attr("value")+'/');
+        // $('#add_path').append($(this).find("option:selected").attr("value"));
+        // $('span > p').append($(this).find("option:selected").attr("value"));
+        // var path = document.getElementById('get_path');
+        // var text = path.textContent;
+        
+        // document.write(text);
+        // console.log("test"+text);
+        // $("#sent_path").val(text);
+
+        var data = document.getElementById("package_list").value = this.value;
+
+        console.log(this.value);
+        if (this.value == "Images"){
+            $.ajax({
+              url: "/get_dropdown_images",
+              type: "get",
+              data: {proglang: data},
+              success: function(response) {
+                $("#place_for_images").html(response);
+                console.log(response)
+              },
+              error: function(xhr) {
+                //Do Something to handle error
+              }
+            });
+        }
+
+        var app_path = this.value
+        $("#add_path").val(function() {
+            // return this.value+app_path;
+            return this.value+'/'+app_path;
+        });
+
+    });
+
+    $(function(){
+        $('#reset_package').click(function(){
+            // Do what ever you want
+           // document.getElementById("images").disabled = true;
+           document.getElementById("package_list").disabled = true;
+           document.getElementById("product").disabled = false;
+           // $('#product').prop('disabled', false);
+           document.getElementById("btnSubmit").disabled = true;
+        });
+    });
+
+    // $(function() {
+    //     $('#prospects_form').on('submit', function(e) {
+    //           e.preventDefault();
+    //           setTimeout(function() {
+    //                window.location.reload();
+    //           },0);
+    //           this.submit();
+    //     });
+    // });
+
+    // $('select').on('change', function() {
+    //   console.log(this.value);
+    //   var data = document.getElementById("repo").value = this.value;
+    //   console.log(data)
+    //   $("#group").val(data);
+    // });
+
+    // $('#repo').on('change', function() {
+    //   console.log(this.value);
+    //   var data = document.getElementById("repo_select").value = this.value;
+
+    //       $.ajax({
+    //           url: "/get_repository",
+    //           type: "get",
+    //           data: {proglang: data},
+    //           success: function(response) {
+    //             $("#place_for_suggestions").html(response);
+    //             console.log(response)
+    //           },
+    //           error: function(xhr) {
+    //             //Do Something to handle error
+    //           }
+    //         });
+
+    //     });
+
+    $(document).ready(function() {
+        $("#ck_file").click(function(){
+
+            var data = "test"
+            console.log("teuuu"+data);
+            // document.getElementById("ck_file").disabled = true;
+
+            $.ajax({
+              url: "/check_resource",
+              type: "get",
+              data: {proglang: data},
+              // data2: {proglang: repo},
+              success: function(response) {
+                $("#place_for_submit").html(response);
+                console.log(response)
+              },
+              error: function(xhr) {
+                //Do Something to handle error
+              }
+            });
+        });
+    });
+
+</script>

@@ -1,0 +1,184 @@
+{% extends "base_new.html" %}
+{% set active_page = "menu1" %}
+{% block title %}Status{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+{% block content %}
+<div>
+    <div class="content" v-cloak>
+        <div class="row">
+            <div class="col-md-1"><a href="/"><img src="{{ url_for('static', filename='images/ic-back.png') }}"
+                        style="width:50px;height:50px;"></a></div>
+            <div class="col-md-11" v-bind:class="statusinfoStyle">
+                <h3 class="font-weight-bold">Status<span
+                        class="lbstatus-md">{{ info['chassis_name']}}{{ info['slot_no'] }}</span>
+                </h3>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-11">
+                <!-- <test-item v-for="item in statuses" v-bind:item="item"></test-item> -->
+                <table class="table">
+                    <thead>
+                        <tr calss="tb-header">
+                            <th>Test Case</th>
+                            <th>Status</th>
+                            <th>Started</th>
+                            <th>Finished</th>
+                            <th>Run Time</th>
+                            <th>Reason</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="table-light" is="status-item" v-for="item in statuses" v-bind:item="item"
+                            v-bind:key="item.id" v-bind:value="item"></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block footer %}
+{{ super() }}
+<script type="text/javascript">
+    var slot = {{ info["slot_no"] }};
+    var socket = io.connect("http://" + document.domain + ":" + location.port + '/slot/' + slot);
+    socket.on('connect', function () {
+        socket.emit('my event', {
+            data: 'User Connected'
+        })
+
+    })
+
+
+
+    var app = new Vue({
+        el: '#app',
+        delimiters: ['[[', ']]'],
+        data: {
+            message: 'Hello Vue!',
+            statuses: [],
+            info: {},
+            loading: true
+        },
+        computed: {
+            statusinfoStyle: function () {
+                if (this.info.hasOwnProperty("result")) {
+                    return {
+                        testing: this.info.result.toLowerCase() == "testing",
+                        passes: this.info.result.toLowerCase() == "pass",
+                        failed: this.info.result.toLowerCase() == "fail",
+                    }
+                }
+                return {}
+            }
+        },
+        mounted() {
+            let vm = this
+            axios.get("/api/statuses/update_slot/" + slot)
+                .then(response => {
+                    this.loading = false;
+                    this.statuses = response.data.statuses;
+                    this.info = response.data.info;
+                    console.log(response.data);
+                });
+            socket.on('update_status', function (msg) {
+                console.log(msg.data);
+                vm.statuses = msg.data.statuses;
+                vm.info = msg.data.info;
+            });
+        }
+    });
+
+    function getZeroPad(n) {
+        return (parseInt(n, 10) >= 10 ? '' : '0') + n
+    }
+    Vue.component('status-item', {
+        props: ['item'],
+        delimiters: ['[[', ']]'],
+        mounted() {
+            this.$options.interval = setInterval(this.updateDateTime, 1000);
+        },
+        data() {
+            return {
+                timer: ""
+            }
+        },
+        computed: {
+            statusStyle: function () {
+                return {
+                    testing: this.item.status.toLowerCase() == "testing",
+                    passes: this.item.status.toLowerCase() == "pass",
+                    failed: this.item.status.toLowerCase() == "fail",
+                }
+            }, displayelapsedTime: function () {
+                if (this.item.finished != null) {
+                    return this.item.elapsed_time;
+                }
+                let started = new Date(this.item.started);
+                let now = new Date();
+                let diff = now.getTime() - started.getTime();
+                let hh = Math.floor(diff / 1000 / 60 / 60);
+                diff -= hh * 1000 * 60 * 60;
+                let mm = Math.floor(diff / 1000 / 60);
+                diff -= mm * 1000 * 60;
+                let ss = Math.floor(diff / 1000);
+                diff -= ss * 1000;
+                return getZeroPad(hh) + ":" + getZeroPad(mm) + ":" + getZeroPad(ss);
+            }
+        },
+        methods: {
+            updateDateTime() {
+                if (this.item.finished != null) {
+                    this.timer = this.item.elapsed_time;
+                }
+                else {
+                    let started = new Date(this.item.started);
+                    let now = new Date();
+                    let diff = now.getTime() - started.getTime();
+                    let hh = Math.floor(diff / 1000 / 60 / 60);
+                    diff -= hh * 1000 * 60 * 60;
+                    let mm = Math.floor(diff / 1000 / 60);
+                    diff -= mm * 1000 * 60;
+                    let ss = Math.floor(diff / 1000);
+                    diff -= ss * 1000;
+                    this.timer = getZeroPad(hh) + ":" + getZeroPad(mm) + ":" + getZeroPad(ss);
+                }
+            }
+
+        },
+        template: `
+        
+                    <tr class="text-center">
+                            <td><a :href="'./view/'+   item.name  ">[[item.name]]</a></td>
+                    <td class="text-center" v-bind:class="statusStyle">
+                        <span class="lbstatus-sm">[[item.status]]</span>
+                    </td>
+                    <td class="text-center">[[item.started]]</td>
+                    <td class="text-center">[[item.finished]]</td>
+                    <td class="text-center">[[timer]]</td>
+                    <td class="text-center">[[item.reason]]</td>
+                        
+                        </tr>
+       
+                
+             
+        `
+    })
+
+    Vue.component('test-item', {
+        props: ['item'],
+        delimiters: ['[[', ']]'],
+        template: `
+          <p> [[item.name]] </p>
+             
+        `
+    })
+</script>
+
+{% endblock %}

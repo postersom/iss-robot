@@ -1,0 +1,99 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+
+<head>
+    {% block head %}
+    <meta charset="utf-8" />
+    <title>{% block title %}Robot Testing{% endblock %}</title>
+    <link href="Images/logo.ico" rel="ISS Icon" type="image/x-icon" />
+    <meta name="viewport" content="width=device-width" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <link href="{{ url_for('static', filename='css/bootstrap.css') }}" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='css/bootstrap-datepicker.css') }}" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet" />
+
+
+
+</head>
+{% endblock %}
+
+<body>
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <div class="navbar-brand">
+                    <a href="/"> <img src="{{ url_for('static', filename='images/CL_LOGO_WHITE.png') }}"></a>
+                </div>
+            </div>
+            <div>
+                <ul class="nav navbar-nav">
+
+                    <li id="menu1" class="{{ 'active' if active_page == 'menu1' else '' }}">
+
+                        <a href="/"> Home </a>
+
+                    </li>
+                    <li id="menu2" class="{{ 'active' if active_page == 'menu2' else '' }}">
+
+                        <a href="/log" class="btnlog "> Log
+
+                            Viewer </a>
+
+                    </li>
+                    <li id="menu3" class="{{ 'active' if active_page == 'menu3' else '' }}">
+                        <a href="/setting">Setting</a>
+                    </li>
+                    <li id="menu4" class="{{ 'active' if active_page == 'menu4' else '' }}">
+                        <a href="/playbox">PlayBox</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+    </nav>
+
+    <div id="content"></div>
+
+    <div class="{{ 'container-fluid' if content == 'fluid' else 'container' }}">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+</body>
+{% block footer %}
+<div class="text-center" style="color:#bbb;margin-bottom:10px;margin-top:50px;">
+    <p id="version"></p>
+</div>
+<div class="text-center">
+    <p> </p>
+    <p>© Copyright Celestica Inc. 2019. All rights reserved.</p>
+</div>
+</div>
+<script src="{{ url_for('static', filename='js/jquery-1.9.1.js') }}"></script>
+<script src="{{ url_for('static', filename='js/jquery.validate.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/additional-methods.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap-typeahead.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap-datepicker.js') }}"></script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script type="text/javascript">
+
+    $(function () {
+        $("[data-toggle=popover]").popover({
+            html: true,
+            content: function () {
+                var content = $(this).attr("data-popover-content");
+                return $(content).children(".popover-body").html();
+            },
+            title: function () {
+                var title = $(this).attr("data-popover-content");
+                return $(title).children(".popover-heading").html();
+            }
+        });
+    });
+</script>
+{% endblock %}
+
+</html>

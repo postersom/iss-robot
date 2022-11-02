@@ -1,0 +1,953 @@
+swagger: '2.0'
+info:
+  description: "This website for testing API of Test server project ISS. If any question can read more detail on http://swagger.io or on irc.freenode.net, #swagger."
+  version: "1.0.0"
+  title: "Swagger ISS"
+  termsOfService: "http://swagger.io/terms/"
+  contact:
+    email: "issadmin@celestica.com"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+consumes:
+  - application/json
+produces:
+  - application/json
+
+basePath: "/api"
+tags:
+- name: "Testing"
+  description: "API for Testing"
+- name: "Debug"
+  description: "API for debug service"
+- name: "Robot"
+  description: "API for robot framework"
+- name: "User Interaction"
+  description: "API for user interaction"
+paths:
+  /scanin:
+    post:
+      tags:
+      - "Testing"
+      summary: "Request to starting test"
+      description: ""
+      operationId: "scanin"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Serial number and hardware address are using test user must be provide via website."
+        required: true
+        schema:
+          $ref: "#/definitions/Test"
+      responses:
+        200:
+          description: "successful scan-in testing"
+        401:
+          description: "Input is not found"
+        405:
+          description: "Input is invalid format"
+      x-swagger-router-controller: "controllers.test_controller"
+  /verify:
+    post:
+      tags:
+      - "Testing"
+      summary: "Request to verify test"
+      description: ""
+      operationId: "verify"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Serial number and hardware address are using test user must be provide via website."
+        required: true
+        schema:
+          $ref: "#/definitions/Test"
+      responses:
+        200:
+          description: "successful scan-in testing"
+        401:
+          description: "Input is not found"
+        405:
+          description: "Input is invalid format"
+      x-swagger-router-controller: "controllers.test_controller"
+  /checkout:
+    post:
+      tags:
+      - "Testing"
+      summary: "Request to checkout test"
+      description: ""
+      operationId: "checkout"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Serial number is using delivery out test user must be provide via website."
+        required: true
+        schema:
+          $ref: "#/definitions/Checkout"
+      responses:
+        200:
+          description: "successful delivery out testing"
+        401:
+          description: "Input is not found"
+        405:
+          description: "Input is invalid format"
+      x-swagger-router-controller: "controllers.test_controller"
+  /abort:
+    get:
+      tags:
+        - "Testing"
+      summary: "Request to check abort test"
+      description: ""
+      operationId: "get_abort"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "slot_location_no"
+        in: "query"
+        description: "์Name of slot location"
+        type: "string"
+        required: true
+      responses:
+        200:
+          description: "successful create user interaction of the test"
+        401:
+          description: "Input is not found"
+        405:
+          description: "Input is invalid format"
+        400:
+          description: "Internal Error Please check terminal print"
+      x-swagger-router-controller: "controllers.test_controller"
+    post: 
+      tags:
+      - "Testing"
+      summary: "Request to abort test with pid"
+      description: ""
+      operationId: "test_abort"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Object have properties sn and slot-location from Robot process"
+        required: true
+        schema:
+          $ref: "#/definitions/Abort"
+      responses:
+        200:
+          description: "successful abort testing"
+        401:
+          description: "Input is not found"
+        405:
+          description: "Input is invalid format"
+      x-swagger-router-controller: "controllers.test_controller"
+  /abort_flag:
+    post: 
+      tags:
+      - "Testing"
+      summary: "Request to abort test with pid"
+      description: ""
+      operationId: "set_flag_abort"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Object have properties sn and slot-location from Robot process"
+        required: true
+        schema:
+          $ref: "#/definitions/Abort"
+      responses:
+        200:
+          description: "successful abort testing"
+        401:
+          description: "Input is not found"
+        405:
+          description: "Input is invalid format"
+      x-swagger-router-controller: "controllers.test_controller"
+  /abortpid:
+    post:
+      tags:
+      - "Testing"
+      summary: "Request to abort test with pid"
+      description: ""
+      operationId: "abort_pid"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "query"
+        name: "pid"
+        description: "pid abort testing process "
+        required: true
+        type: integer
+      responses:
+        200:
+          description: "successful abort testing"
+        401:
+          description: "Input is not found"
+        405:
+          description: "Input is invalid format"
+      x-swagger-router-controller: "controllers.test_controller"
+  /view_log:
+    get:
+      tags:
+      - "Testing"
+      summary: "Request to view result of testing"
+      description: ""
+      operationId: "view_log"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "sn"
+        in: "query"
+        description: "serial number use for get result of testing (CF2SZ183400021)"
+        type: "string"
+        required: false
+        default: ""
+      - name: "start_time"
+        in: "query"
+        description: "starting of datetime that user request to start test (1999-01-01)"
+        type: "string"
+        required: false
+        default: ""
+      responses:
+        200:
+          description: "successful view_log"
+        405:
+          description: "Input is invalid format"
+      x-swagger-router-controller: "controllers.test_controller"
+  /sync_point:
+    post:
+      tags:
+      - "Testing"
+      summary: "Request to check point serial number"
+      description: ""
+      operationId: "sync_point"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Object have properties sn and slot-location from Robot process"
+        required: true
+        schema:
+          $ref: "#/definitions/SyncPoint"
+      responses:
+        200:
+          description: "successful abort testing"
+        401:
+          description: "Input is not found"
+        405:
+          description: "Input is invalid format"
+      x-swagger-router-controller: "controllers.test_controller"
+  /remove_sync_point:
+    post:
+      tags:
+      - "Testing"
+      summary: "Request to remove serial-number out of sync-point process"
+      description: ""
+      operationId: "remove_sync_point"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Object have properties sn and slot-location from Robot process"
+        required: true
+        schema:
+          $ref: "#/definitions/SyncPoint"
+      responses:
+        200:
+          description: "successful abort testing"
+        401:
+          description: "Input is not found"
+        405:
+          description: "Input is invalid format"
+      x-swagger-router-controller: "controllers.test_controller"
+  /queue_hardware:
+    post:
+      tags:
+        - "Testing"
+      summary: "Request to get queue for using hardware and auto release queue with timeout"
+      description: ""
+      operationId: "queue_hardware"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Check access point on hardware with it's address."
+        required: true
+        schema:
+          $ref: "#/definitions/QueueHardware"
+      responses:
+        200:
+          description: "successful scan-in testing"
+        401:
+          description: "Input is not found"
+        405:
+          description: "Input is invalid format"
+      x-swagger-router-controller: "controllers.test_controller"
+  /user_interaction:
+    post:
+      tags:
+        - "User Interacting"
+      summary: "Request to create user interaction"
+      description: ""
+      operationId: "create_user_interaction"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Create User Interaction of the test"
+        required: true
+        schema:
+          $ref: "#/definitions/UserInteraction"
+      responses:
+        200:
+          description: "successful create user interaction of the test"
+        401:
+          description: "Input is not found"
+        405:
+          description: "Input is invalid format"
+        400:
+          description: "Internal Error Please check terminal print"
+      x-swagger-router-controller: "controllers.userinteraction_controller"
+    get:
+      tags:
+        - "User Interacting"
+      summary: "Request to create user interaction"
+      description: ""
+      operationId: "user_interaction"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "slot_location_no"
+        in: "query"
+        description: "Number of slot location"
+        type: "string"
+        required: true
+      responses:
+        200:
+          description: "successful create user interaction of the test"
+        401:
+          description: "Input is not found"
+        405:
+          description: "Input is invalid format"
+        400:
+          description: "Internal Error Please check terminal print"
+      x-swagger-router-controller: "controllers.userinteraction_controller"
+  /settings:
+    get: 
+      tags: [Settings]
+      operationId: controllers.setting_controller.get_settings
+      summary: Get all settings
+      parameters: 
+        - name: limit
+          in: query
+          type: integer
+          minimum: 0
+          default: 100
+      responses:
+        200:
+          description: Return setting
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Setting'
+    put:  
+      tags: [Settings]
+      operationId: controllers.setting_controller.put_setting
+      summary: Create or update a setting
+      parameters: 
+        - name: setting
+          in: body
+          schema:
+            $ref: '#/definitions/Setting'
+      responses:
+        200:
+          description: Setting updated
+        201:
+          description: New setting created
+  /settings/{setting_id}:
+    get:  
+      tags: [Settings]
+      operationId: controllers.setting_controller.get_setting
+      summary: Get a single setting
+      parameters:
+        - $ref: '#/parameters/setting_id'
+      responses:
+        200:
+          description: Return pet
+          schema:
+            $ref: '#/definitions/Setting'
+        404:
+          description: Setting does not exist
+    delete:  
+      tags: [Settings]
+      operationId: controllers.setting_controller.delete_setting
+      summary: Remove a setting
+      parameters:
+        - $ref: '#/parameters/setting_id'
+      responses:
+        204:
+          description: Setting was deleted
+        404:
+          description: Setting does not exist
+  /logs:
+    get: 
+      tags: [Logs]
+      operationId: controllers.log_controller.get_logs
+      summary: Get all logs
+      parameters: 
+        - name: limit
+          in: query
+          type: integer
+          minimum: 0
+          default: 100
+      responses:
+        200:
+          description: Return log
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Log'
+    put:  
+      tags: [Logs]
+      operationId: controllers.log_controller.put_log
+      summary: Create or update a log
+      parameters: 
+        - name: log
+          in: body
+          schema:
+            $ref: '#/definitions/Log'
+      responses:
+        200:
+          description: Log updated
+        201:
+          description: New log created
+  /logs/view:
+    get: 
+      tags: [Logs]
+      operationId: controllers.log_controller.view_all_log
+      summary: Get all logs
+      parameters: 
+        - name: "sn"
+          in: "query"
+          description: "serial number use for get result of testing (CF2SZ183400021)"
+          type: "string"
+          required: false
+          default: ""
+        - name: "start_time"
+          in: "query"
+          description: "starting of datetime that user request to start test (1999-01-01)"
+          type: "string"
+          required: false
+          default: ""
+      responses:
+        200:
+          description: Return log 
+  /logs/{log_id}:
+    get:  
+      tags: [Logs]
+      operationId: controllers.log_controller.get_log
+      summary: Get a single log
+      parameters:
+        - $ref: '#/parameters/log_id'
+      responses:
+        200:
+          description: Return log
+          schema:
+            $ref: '#/definitions/Log'
+        404:
+          description: Log does not exist
+    delete:  
+      tags: [Logs]
+      operationId: controllers.log_controller.delete_log
+      summary: Remove a log
+      parameters:
+        - $ref: '#/parameters/log_id'
+      responses:
+        204:
+          description: Log was deleted
+        404:
+          description: Log does not exist
+  /tests:
+    get: 
+      tags: [Tests]
+      operationId: controllers.test_controller.get_tests
+      summary: Get all tests
+      parameters: 
+        - name: limit
+          in: query
+          type: integer
+          minimum: 0
+          default: 100
+      responses:
+        200:
+          description: Return test
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Test_collections'
+    put:  
+      tags: [Tests]
+      operationId: controllers.test_controller.put_test
+      summary: Create or update a test
+      parameters: 
+        - name: test
+          in: body
+          schema:
+            $ref: '#/definitions/Test_collections'
+      responses:
+        200:
+          description: test updated
+        201:
+          description: New test created
+  /tests/{test_id}:
+    get:  
+      tags: [Tests]
+      operationId: controllers.test_controller.get_test
+      summary: Get a single test
+      parameters:
+        - $ref: '#/parameters/test_id'
+      responses:
+        200:
+          description: Return test
+          schema:
+            $ref: '#/definitions/Test_collections'
+        404:
+          description: Test does not exist
+    delete:  
+      tags: [Tests]
+      operationId: controllers.test_controller.delete_test
+      summary: Remove a test
+      parameters:
+        - $ref: '#/parameters/test_id'
+      responses:
+        204:
+          description: Test was deleted
+        404:
+          description: Test does not exist
+  /statuses:
+    get: 
+      tags: [Statuses]
+      operationId: controllers.status_controller.get_statuses
+      summary: Get all statuses
+      parameters: 
+        - name: limit
+          in: query
+          type: integer
+          minimum: 0
+          default: 100
+      responses:
+        200:
+          description: Return status
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Status'
+    put:  
+      tags: [Statuses]
+      operationId: controllers.status_controller.put_status
+      summary: Create or update a status
+      parameters: 
+        - name: status
+          in: body
+          schema:
+            $ref: '#/definitions/Status'
+      responses:
+        200:
+          description: status updated
+        201:
+          description: New status created
+  /statuses/{status_id}:
+    get:  
+      tags: [Statuses]
+      operationId: controllers.status_controller.get_status
+      summary: Get a single status
+      parameters:
+        - $ref: '#/parameters/status_id'
+      responses:
+        200:
+          description: Return status
+          schema:
+            $ref: '#/definitions/Status'
+        404:
+          description: Status does not exist
+    delete:  
+      tags: [Statuses]
+      operationId: controllers.status_controller.delete_status
+      summary: Remove a status
+      parameters:
+        - $ref: '#/parameters/status_id'
+      responses:
+        204:
+          description: Status was deleted
+        404:
+          description: Status does not exist
+  /statuses/slot/{slot_no}:
+      get: 
+        tags: [Statuses]
+        operationId: controllers.status_controller.get_status_by_slot
+        summary: Get all statuses by slot
+        parameters: 
+          - $ref: '#/parameters/slot_no' 
+        responses:
+          200:
+            description: Return status
+            schema:
+              type: array
+              items:
+                $ref: '#/definitions/Status'
+  /statuses/update_slot/{slot_no}:
+      get: 
+        tags: [Statuses]
+        operationId: controllers.status_controller.update_data
+        summary: Get all statuses by slot
+        parameters: 
+          - $ref: '#/parameters/slot_no' 
+        responses:
+          200:
+            description: Return status
+            schema:
+              type: array
+              items:
+                $ref: '#/definitions/Status'
+                
+parameters:
+  pet_id:
+    name: pet_id
+    description: Pet's Unique identifier
+    in: path
+    type: integer
+    required: true
+    pattern: "^[a-zA-Z0-9-]+$"
+  setting_id:
+    name: setting_id
+    description: Setting's Unique identifier
+    in: path
+    type: integer
+    required: true 
+  log_id:
+    name: log_id
+    description: Log's Unique identifier
+    in: path
+    type: integer
+    required: true
+  test_id:
+    name: test_id
+    description: Test's Unique identifier
+    in: path
+    type: integer
+    required: true
+  status_id:
+    name: status_id
+    description: Status's Unique identifier
+    in: path
+    type: integer
+    required: true
+  slot_no:
+    name: slot_no
+    description: slot number of test server
+    in: path
+    type: integer
+    required: true
+
+definitions:
+  Test:
+    type: "object"
+    required: 
+    - "serial_number"
+    - "test_mode"
+    - "operation_id"
+    - "slot_location"
+    - "test_station"
+    - "odc_type"
+    properties:
+      serial_number:
+        type: "string"
+      test_mode:
+        type: "string"
+      operation_id:
+        type: "string"
+      slot_location:
+        type: "string"
+      test_station:
+        type: "string"
+      odc_type:
+        type: "string"
+    example:
+      serial_number: "CF2SZ183400021"
+      test_mode: "Production"
+      operation_id: "th00000000"
+      slot_location: "ChassisSN_slotNo"
+      test_station: "Pre_FCT"
+      odc_type: "verify"
+  Checkout:
+    type: "object"
+    required:
+    - "serial_number"
+    - "test_mode"
+    - "operation_id"
+    - "slot_location"
+    - "test_station"
+    - "odc_type"
+    - "uut_log_dir"
+    properties:
+      serial_number:
+        type: "string"
+      test_mode:
+        type: "string"
+      operation_id:
+        type: "string"
+      slot_location:
+        type: "string"
+      test_station:
+        type: "string"
+      odc_type:
+        type: "string"
+      uut_log_dir:
+        type: "string"
+    example:
+      serial_number: "CF2SZ183400021"
+      test_mode: "Production"
+      operation_id: "th00000000"
+      slot_location: "ChassisSN_slotNo"
+      test_station: "Pre_FCT"
+      odc_type: "verify"
+      uut_log_dir: "uut_log_dir_simple"
+  SyncPoint:
+    type: "object"
+    required:
+    - "serial_number"
+    - "slot_location"
+    - "setup"
+    properties:
+      serial_number:
+        type: "string"
+      slot_location:
+        type: "string"
+      setup:
+        type: "boolean"
+    example:
+      serial_number: "CF2SZ183400021"
+      slot_location: "PF01_01"
+      setup: true
+  QueueHardware:
+    type: "object"
+    required:
+    - "hardware_addr"
+    - "timeout"
+    properties:
+      hardware_addr:
+        type: "string"
+      timeout:
+        type: "integer"
+        format: "int32"
+    example:
+      hardware_addr: "ac:bc:32:7e:2f:5d"
+      timeout: 10
+  UserInteraction:
+    type: "object"
+    required:
+    - "slot_location_no"
+    - "title"
+    - "message"
+    - "timeout"
+    properties:
+      slot_location_no:
+        type: "number"
+      title:
+        type: "string"
+      message:
+        type: "string"
+      picture:
+        type: "string"
+      html:
+        type: "string"
+      timeout:
+        type: "number"
+    example:
+      slot_location_no: "1"
+      title: "LED Check"
+      message: "Please check the LED on the roght hand of machine"
+      picture: "LED"
+      timeout: "100"
+  Setting:
+    type: object
+    required:
+      - name 
+    properties:
+      id:
+        type: integer
+        description: Unique identifier
+        example: 123 
+      name:
+        type: string
+        description: Setting's name
+        example: "IP Address"
+        minLength: 1
+        maxLength: 100
+      value:
+        type: string
+        description: Setting's value
+        example: "0.0.0.0"
+        minLength: 0 
+      created:
+        type: string
+        format: date-time
+        description: Creation time
+        example: "2015-07-07T15:49:51.230+02:00" 
+  Log:
+    type: object
+    required:
+      - name 
+    properties:
+      id:
+        type: integer
+        description: Unique identifier
+        example: 123 
+      name:
+        type: string
+        description: Log's name
+        example: "20180910_TEST"
+        minLength: 1
+        maxLength: 1000
+      location:
+        type: string
+        description: Log's location
+        example: "/home"
+        minLength: 0 
+      created:
+        type: string
+        format: date-time
+        description: Creation time
+        example: "2015-07-07T15:49:51.230+02:00" 
+  Test_collections:
+    type: object
+    required:
+      - serial_number 
+    properties:
+      id:
+        type: integer
+        description: Unique identifier
+        example: 123 
+      test_id:
+        type: integer
+        description: Test's id
+        example: 100001
+        minLength: 1
+        maxLength: 1000
+      serial_number:
+        type: string
+        description: Test's serial_number
+        example: "CF2SZ183400001"
+        minLength: 1
+        maxLength: 1000
+      uut_log_dir:
+        type: string
+        description: UUT LOG directory's path
+        example: "/var/log"
+        minLength: 1
+        maxLength: 1000
+      location:
+        type: string
+        description: Station's location
+        example: "AST"
+        minLength: 0 
+      statuses:
+        type: array
+        items:
+          $ref: '#/definitions/Status'
+        description: Statuses
+        example: [] 
+      created:
+        type: string
+        format: date-time
+        description: Creation time
+        example: "2015-07-07T15:49:51.230+02:00" 
+  Status:
+    type: object
+    required:
+      - status
+    properties: 
+      status:
+        type: string
+        description: Status's name
+        example: "PASS"
+        minLength: 1
+        maxLength: 100
+      message:
+        type: string
+        description: Status's message
+        example: "print................"
+        minLength: 0 
+        maxLength: 1000
+      test_location:
+        type: string
+        description: Location of Test
+        example: "PF01_01"  
+  Abort:
+    type: object
+    required:
+      - test_location
+    properties: 
+      test_location:
+        type: string
+        description: Location of Test
+        example: "PF01_01"  

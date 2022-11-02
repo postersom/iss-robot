@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% set active_page = "menu3" %}
+{% block title %}{{ block_title }}{% endblock %}
+{% block head %}
+{{ super() }}
+
+{% endblock %}
+{% block content %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for category, message in messages %}
+<div class="alert alert-{{ category }} alert-dismissible" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+            aria-hidden="true">&times;</span></button>
+    <!-- <strong>Title</strong> --> {{ message }}
+</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
+ 
+<h1>Distribution Server</h1>
+<img src="/static/images/tenor.gif" id="gif" style="display: none; margin: 0 auto; width: 300px; height: 300px; visibility: hidden;">
+<form method="POST" onsubmit="" id="put_submit">
+    <fieldset id="test">
+
+        <div class="row" style="margin-bottom:10px">
+            <div class="col-xs-10" style="text-align:center">
+                <h3> Put Release </h3>
+            </div>
+        </div>
+
+
+        <div class="row" style="margin-bottom:10px">
+
+            <div class="row" style="margin-bottom:10px">
+            <div class="col-xs-4" style="text-align:right">
+                <b> Product : </b>
+            </div>
+            <div class="col-xs-1" style="text-align:left;margin-top:4px">
+                <span id="symbol-msg"></span>
+                <span id="stname-msg"></span>
+            </div>
+            <div class="col-xs-3">
+                <select class="form-control" id="datagroup" name="datagroup">
+                  <option value="">Please select</option>
+                    {% for i in range(0, len3) %}
+                        <option value="{{ datagroup[i] }}" >{{ datagroup[i] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+            <div style="display: none;">
+                
+                <input name="group" id="group" type="hidden"><br>
+                <input name="repo_select" id="repo_select" type="hidden"><br>
+                <input name="tag" id="tag" type="hidden"><br>
+
+            </div>
+        </div>
+
+        <div id="place_for_group"></div>
+        <div id="place_for_suggestions"></div>
+
+    </fieldset>
+
+    <div style="text-align:center">
+        <!-- <span><button type="submit" id="btnSubmit" class="btn btn-success submitbut" disabled="">Put Release</button> -->
+        <button type="button" id="btnSubmit" class="btn btn-success submitbut" data-toggle="modal" data-target="#submit_put" disabled="">Submit</button>
+        <span><a class="btn btn-warning btnCancal" id="btnCancal" href="/distribution/home/" role="button">Cancle</a>
+        </span><br />
+    </div>
+
+    <!-- confirmPut -->
+    <div class="modal fade" id="submit_put" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document" style="width:400px;">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:#EBEBE0;border-bottom:3px solid #9ba300;">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Confirm Put Release<span
+                            class="slot-no-heading"></span></h4>
+                </div>
+                <div class="modal-body" style="height:150px;">
+                    Do you want to Put Release?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="submit_form" class="btn btn-primary" data-dismiss="modal">Confirm</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+   
+</form>
+
+{% endblock %}
+{% block footer %}
+{{ super() }}
+<script type="text/javascript">
+
+    $('#put_submit').submit(function() {
+        $('#gif').css('visibility', 'visible');
+        document.getElementById("gif").style.display = 'block';
+        document.getElementById("btnSubmit").disabled = true;
+        // document.getElementsByClassName("btnCancal").disabled = true;
+        $("span > a").attr("disabled", "disabled");
+        document.getElementById("datagroup").disabled = true;
+        document.getElementById("repo").disabled = true;
+        document.getElementById("tag_list").disabled = true;
+    });
+
+
+    $('#datagroup').on('change', function() {
+      console.log(this.value);
+      document.getElementById("btnSubmit").disabled = true;
+      var data = document.getElementById("group").value = this.value;
+
+      $.ajax({
+          url: "/get_group",
+          type: "get",
+          data: {proglang: data},
+          success: function(response) {
+            $("#place_for_group").html(response);
+            console.log(response)
+          },
+          error: function(xhr) {
+            //Do Something to handle error
+          }
+        });
+
+    });
+
+    $('#submit_form').click(function(){
+        console.log('submitting');
+        $('#put_submit').submit();
+    });
+
+</script>
+{% endblock %}

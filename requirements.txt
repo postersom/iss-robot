@@ -1,0 +1,15 @@
+robotframework
+robotframework-sshlibrary
+robotframework-requests
+connexion
+Flask
+SQLAlchemy
+Flask-SQLAlchemy
+swagger-ui-bundle
+marshmallow
+marshmallow-sqlalchemy
+python-dotenv
+pyserial
+psutil 
+eventlet
+flask-socketio

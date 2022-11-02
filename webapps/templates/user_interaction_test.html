@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+{% set active_page = "menu1" %}
+{% block title %}{{ block_title }}{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-1"><a href="/"><img src="{{ url_for('static', filename='images/ic-back.png') }}"
+                style="width:50px;height:50px;"></a></div>
+    <form action="" method="post" onsubmit="" id="userinteraction-form" class="form-horizontal">
+        <div class="col-md-11 ">
+            <div class="row">
+                <div class="testing">
+                    <h3>User Interaction
+                        <span
+                            class="lbstatus-md">{{ info['chassis_name']}}{{ info['slot_no'] }}</span>
+                    </h3>
+                </div>
+                <hr / style="border-top:2px solid #ccc">
+
+
+                <input id="id" name="id" type="text" class="form-control hidden" value="{{ interaction['id'] }}" />
+                <h2><strong>{{ interaction['title'] }}</strong></h2>
+                <pre
+                    style="font-family: inherit;background-color:#53565B;color:#fff;"><h4>{{ interaction['message']}}</h4></pre>
+
+            </div>
+            <div class="row content">
+                {% if interaction['picture'] and interaction['picture']|length > 0 %}
+                <div class="col-sm-6" id="interaction_image">
+
+                    <p><img src="{{ url_for('interaction_files', filepath=filepath , filename=interaction['picture']) }}"
+                            style="max-width:90%;">
+                    </p>
+
+                </div>
+                {% endif %}
+                <div class="col-sm-6" id="input-answer">
+                    <div class="form-group">
+                        <div class="col-sm-12">
+                            <label class="group-radio-answer radio" style="color:#008000 "><input type="radio"
+                                    id="answer-pass" name="answer" class="form-control" value="pass"><span
+                                    class="checkmark"></span><strong>GREEN</strong> </label>
+                            <label class=" group-radio-answer radio" style="color:#FFA500 "><input type="radio"
+                                    name="answer" class="form-control" value="fail"><span
+                                    class="checkmark"></span><strong>ORANGER</strong></label>
+                            <label class="group-radio-answer radio" style="color:#0000FF "><input type="radio"
+                                    name="answer" class="form-control" value="fail"><span
+                                    class="checkmark"></span><strong>BLUE</strong></label>
+                            <label class="group-radio-answer radio" style="color:#FF0000 "><input type="radio"
+                                    name="answer" class="form-control" value="fail"><span
+                                    class="checkmark"></span><strong>RED</strong></label>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <div class="col-sm-12">
+                            <label for="operation_id" class="col-sm-3 control-label text-left">Operation ID : </label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="operation_id_ui" name="operation_id"
+                                    value="" />
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- <div class="form-group">
+                        <label for="reason" class="col-sm-3 control-label text-left">Reason: </label>
+                        <div class="col-sm-9">
+                            <textarea class="form-control" rows="5" id="reason" name="reason" value=""
+                                disabled="disabled"></textarea>
+                        </div>
+                    </div> -->
+
+
+                </div>
+            </div>
+        </div>
+
+
+        <div class="modal-btn">
+            <button type="submit" id="user-interaction-submit" disabled="disabled"
+                class="btn btn-primary">Submit</button>
+            <button type="button" class="btn btn-default" onclick="reset()">Reset</button>
+        </div>
+</div>
+</form>
+
+
+</div>
+<script type="text/javascript">
+
+</script>
+
+{% endblock %}
+{% block footer %}
+{{ super() }}
+
+<script type="text/javascript">
+
+    $(function () {
+        $('input[name="answer"]').change(function () {
+            if ($('input[name="answer"]:checked').val() == 'pass') {
+                $("#reason").attr("disabled", "disabled");
+                $("#reason").val('')
+            }
+            else {
+                $("#reason").removeAttr("disabled");
+            }
+        });
+
+        var operation_id = getCookie("operation_id");
+        $("#operation_id_ui").val(operation_id);
+
+        $("#userinteraction-form").validate({
+            rules: {
+                operation_id: {
+                    required: true,
+                    nowhitespace: true
+                },
+                answer: {
+                    required: true
+                },
+                reason: {
+                    required: function () {
+                        return $('input[name="answer"]:checked').val() == 'fail';
+                    }
+                }
+            },
+            messages: {
+                operation_id: { required: "Please fill your id", maxlength: "no spacebar in your id" },
+                answer: { required: "Please select answer" },
+                reason: { required: "Please fill error reason" },
+            },
+            errorElement: "em",
+            errorPlacement: function (error, element) {
+                // Add the `help-block` class to the error element
+                error.addClass("help-block");
+
+                if (element.prop("type") === "checkbox") {
+                    error.insertAfter(element.parent("label"));
+                } else {
+                    error.insertAfter(element);
+                }
+            },
+            highlight: function (element, errorClass, validClass) {
+                $(element).parents(".col-xs-4").addClass("has-error");
+            },
+            unhighlight: function (element, errorClass, validClass) {
+                $(element).parents(".col-xs-4").removeClass("has-error");
+            }
+        });
+        var form = $("#userinteraction-form");
+        var submitbutton = $("#user-interaction-submit");
+        $("#userinteraction-form").on("change keyup", ".form-control ", function () {
+            if (form.valid() && ($('input[name="answer"]:checked').val() != undefined)) {
+                submitbutton.removeAttr("disabled");
+            } else {
+                submitbutton.attr("disabled", "disabled");
+            }
+        });
+        $("#userinteraction-form").submit(function (event) {
+            setCookie("operation_id", $("#operation_id_ui").val(), 365);
+        });
+    });
+</script>
+{% endblock %}

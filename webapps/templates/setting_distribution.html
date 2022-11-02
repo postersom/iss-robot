@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% set active_page = "menu3" %}
+{% block title %}{{ block_title }}{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+{% block content %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for category, message in messages %}
+<div class="alert alert-{{ category }} alert-dismissible" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+            aria-hidden="true">&times;</span></button>
+    <!-- <strong>Title</strong> --> {{ message }}
+</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
+<h1>Distribution Server</h1>
+<form action="" method="post" onsubmit="" id="add-setting-form">
+    <fieldset>
+        <legend></legend>
+
+        <div class="row" style="margin-bottom:10px">
+            <div class="col-xs-12" style="text-align:center">
+                <h3> Login </h3>
+            </div>
+        </div>
+
+
+        <div class="row" style="margin-bottom:10px">
+            <div class="col-xs-5" style="text-align:right">
+                <b> User Name : </b>
+            </div>
+            <div class="col-xs-5">
+                <input type="text" id="name" name="name" value="{{ form_data['name']  if form_data}}"
+                    style="width:200px;margin-left:10px" class="form-control">
+            </div>
+            <div class="col-xs-5" style="margin-left:-90px;margin-top:4px">
+                <span id="symbol-msg"></span>
+                <span id="stname-msg"></span>
+            </div>
+        </div>
+
+
+        <div class="row" style="margin-bottom:10px">
+            <div class="col-xs-5" style="text-align:right">
+                <b>Password : </b>
+            </div>
+            <div class="col-xs-5">
+                <input type="text" id="title" name="title" value="{{ form_data['title'] if form_data}}"
+                    style="width:200px;margin-left:10px" class="form-control">
+            </div>
+            <div class="col-xs-4" style="margin-left:-90px;margin-top:4px">
+                <span id="symbol-msg"></span>
+                <span id="stname-msg"></span>
+            </div>
+        </div>
+
+    </fieldset>
+
+
+
+    <legend> </legend>
+    <div class="col-xs-5"></div>
+    <div class="col-xs-2" style="text-align:center">
+        <span><a class="btn btn-success btn-lg btn-block" href="/distribution/home/" role="button">  OK  </a>
+        <!-- <span><a class="btn btn-success submitbut" href="/distribution/singup/" role="button">Singup</a> -->
+        </span><br>
+    </div>
+   
+</form>
+
+{% endblock %}
+{% block footer %}
+{{ super() }}
+<script type="text/javascript">
+
+    $(function () {
+        $("#add-setting-form").validate({
+            rules: {
+                chassis_name: {
+                    required: true,
+                    maxlength: 10,
+                    nowhitespace: true
+                },
+                operation: {
+                    required: true,
+                    maxlength: 25
+                },
+                station: {
+                    required: true,
+                    maxlength: 25
+                },
+                slot: {
+                    required: true,
+                    digits: true,
+                    max: 100,
+                    min: 1
+                },
+                interval: {
+                    required: true,
+                    digits: true,
+                    max: 1000000,
+                    min: 1
+                }
+            },
+            messages: {
+                chassis_name: { required: "Please specify Chassis Name", maxlength: "Character not exceed than 10" },
+                operation: { required: "Please specify Operation Name", maxlength: "Character not exceed than 25" },
+                station: { required: "Please specify Station Name", maxlength: "Character not exceed than 25" },
+                slot: "Plase input only number in range 1 - 100",
+                interval: "Plase input only number in range 1 - 1,000,000 (seconds) ",
+            },
+            errorElement: "em",
+            errorPlacement: function (error, element) {
+                // Add the `help-block` class to the error element
+                error.addClass("help-block");
+
+                if (element.prop("type") === "checkbox") {
+                    error.insertAfter(element.parent("label"));
+                } else {
+                    error.insertAfter(element);
+                }
+            },
+            highlight: function (element, errorClass, validClass) {
+                $(element).parents(".col-xs-4").addClass("has-error");
+            },
+            unhighlight: function (element, errorClass, validClass) {
+                $(element).parents(".col-xs-4").removeClass("has-error");
+            }
+        });
+    });
+</script>
+{% endblock %}

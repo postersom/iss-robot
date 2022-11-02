@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% set active_page = "menu3" %}
+{% block title %}{{ block_title }}{% endblock %}
+{% block head %}
+{{ super() }}
+
+{% endblock %}
+{% block content %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for category, message in messages %}
+<div class="alert alert-{{ category }} alert-dismissible" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+            aria-hidden="true">&times;</span></button>
+    <!-- <strong>Title</strong> --> {{ message }}
+</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
+
+<form method="" enctype="" action="" id="">
+
+    <div class="row" style="margin-bottom:10px">
+        <div class="col-xs-10" style="text-align:center">
+            <h3> Check Server </h3>
+        </div>
+    </div>
+
+    <fieldset>
+
+    <div class="panel panel-default">
+            <!-- Default panel contents -->
+            <table id="report" class="table table-striped table-bordered">
+                <thead>
+                    <tr style="font-size:small">
+                        <th>Release Version</th>
+                        <th>Package</th>
+                        <th>Resource Path</th>
+                        <th>File</th>
+                    </tr>
+                </thead>
+                <tbody id="test">
+                    {% for i in range(0, len) %}
+                    <tr>
+                        <td class="text-center">{{ release_version }}</td>
+                        <td class="text-center">{{ package[i] }}</td>
+                        <td class="text-center">{{ resource_path[i] }}</td>
+                        <td class="text-center">{{ file_resource[i] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+    </fieldset>
+    <legend></legend>
+
+    <div style="text-align:center">
+        <button type="button" class="btn btn-success" onclick="closeWin()">Close Tab</button>
+    </div>
+</form>
+
+{% endblock %}
+{% block footer %}
+{{ super() }}
+
+<script type="text/javascript">
+    function closeWin() {
+      window.close();
+    }
+
+</script>
+{% endblock %}

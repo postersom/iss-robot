@@ -1,0 +1,1305 @@
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document" style="width:400px;">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color:#EBEBE0;border-bottom:3px solid #9ba300;">
+                <button type="button" onClick="" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Scan-In Slot <span class="slot-no-heading"></span></h4>
+            </div>
+            <div class="modal-body">
+                <div class="row hidden" style="margin-bottom:10px">
+                    <div class="col-md-4" style="text-align:right">
+                        Project :
+                    </div>
+                    <div class="col-md-8">
+                        <input id="projectname" type="text" class="form-control" value="CF2SZ183400001" />
+                    </div>
+                </div>
+                <div class="row hidden" style="margin-bottom:10px">
+                    <div class="col-md-4" style="text-align:right">
+                        Station name :
+                    </div>
+                    <div class="col-md-8">
+                        <input id="test_station" type="text" class="form-control" value="Pre_FCT" />
+                    </div>
+                </div>
+                <div class="row hidden" style="margin-bottom:10px;">
+                    <div class="col-md-4" style="text-align:right">
+                        Batch ID :
+                    </div>
+                    <div class="col-md-8">
+                        <input disabled name="batch_id" id="batch_id" type="text" class="form-control" value="ABC123" />
+                    </div>
+                </div>
+                <div class="row hidden" style="margin-bottom:10px;">
+                    <div class="col-md-8">
+                        <input disabled name="slot_no" id="slot_no" type="text" class="form-control" value="" />
+                    </div>
+                </div>
+
+                <!-- <div class="row" style="margin-bottom:10px">
+                    <div class="col-md-4" style="text-align:right">
+                        Test Mode :
+                    </div>
+                    <div class="col-md-8">
+                        <select class="form-control" id="testmode">
+                            <option value="Production">Production</option>
+                            <option value="Debug">Debug</option>
+                        </select>
+
+                    </div>
+                </div>
+
+
+                <div class="row" style="margin-bottom:10px">
+                    <div class="col-md-4" style="text-align:right">
+                        Operator ID :
+                    </div>
+                    <div class="col-md-8">
+                        <input id="operation_id" name="operation_id" type="text" class="form-control" value="" />
+                    </div>
+                </div> -->
+                <div class="row" style="margin-bottom:10px">
+                    <div class="col-md-4" style="text-align:right">
+                        Serial Number
+                    </div>
+                    <div class="col-md-8">
+                        <input id="serial_number" type="text" name="serial_number" autofocus
+                            onfocus="this.value = this.value;" style="text-transform: uppercase" class="form-control" />
+                    </div>
+                </div>
+                {% for item in info['parameter']  %}
+                <div class="row" style="margin-bottom:10px">
+                    <div class="col-md-4" style="text-align:right">
+                        {{ item }}
+                    </div>
+                    <div class="col-md-8">
+                        <input id="{{ item }}" type="text" name="{{ item }}" autofocus
+                            onfocus="this.value = this.value;" style="text-transform: uppercase" class="form-control" />
+                    </div>
+                </div>
+                {% endfor %}
+
+
+            </div>
+            <div>
+                <p class="text-center">Please insert the PIM module to the Test Chassis.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="submitScaninmyModal" class="btn btn-primary" onclick="saveScanin()"
+                    data-dismiss="modal">Submit</button>item["statuses"]["message"]
+                <button type="button" class="btn btn-default" onclick="resetScanin()">Reset</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="batchModalSubSlot" tabindex="-1" role="dialog" aria-labelledby="batchModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" onClick="" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="batchModalLabel">Scan-In Batch</span></h4>
+            </div>
+            <div class="modal-body">
+                <div class="row form-inline" id="col-name">
+                    <div class="col-md-4 col-sm-4 form-group">
+                        <label class="form-label">Test Mode :</label>
+                        <select class="form-control" id="testmode">
+                            <option value="Production">Production</option>
+                            <option value="Debug">Debug</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4 col-sm-8 form-group">
+                        <label class="form-label">Operator ID :</label>
+                        <input id="operation_id" name="operation_id" type="text" class="form-control" value="" />
+                    </div>
+                    <div class="col-md-4">
+                    </div>
+                </div>
+
+                <div class="row batch-row-title">
+                    <div class="col-md-2 col-sm-2 text-center">
+                        Test Slot
+                    </div>
+                    <div class="col-md-2 col-sm-2 text-center">
+                        UUT Serial Number
+                    </div>
+                    {% if info["parameter"] | length > 0 %}
+                    <div class="col-md-2 col-sm-2 text-center">
+                        UUT {{info["parameter"] }}
+                    </div>
+                    <div class="col-md-2 col-sm-2 text-center">
+                        LOGOP
+                    </div>
+                    <div class="col-md-1 col-sm-1 text-center">
+                        Status
+                    </div>
+                    {% else %}
+                    <div class="col-md-2 col-sm-2 text-center">
+                        LOGOP
+                    </div>
+                    <div class="col-md-4 col-sm-4 text-center">
+                        Status
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="batch-col-row">
+                    Chamber
+                    {% for chamber in chambers %}
+                    <div class="batch-col-row">
+                        <div class="row batch-row-detail {{ "processing" if chamber|length > 0 }}"
+                            id="batch-col-row-chamber-{{ loop.index }}">
+                            <div class="col-md-2 col-sm-2 text-center">
+                                <input id="chamber{{ loop.index }}" class="hidden batch-sn"
+                                    value="chamber{{ loop.index }}" />
+                                <input id="chamber_slot_no{{ loop.index }}000" class="hidden batch-slot_no"
+                                    value="{{ loop.index + info['slot'] }}" />
+                                <input id="chamber_location{{ loop.index }}" class="hidden batch-slot_location"
+                                    value="chamber{{ loop.index + info['slot'] }}" />
+                                <input id="param{{ loop.index }}" class="hidden option-param" value="" />
+                                <input id="logop{{ loop.index }}" class="hidden logop" value="chamber" />
+                                <p class="batch-text-p">
+                                    chamber{{ loop.index }}
+                                </p>
+                            </div>
+                            <div class="col-md-6 col-sm-6 batch-input-col">
+                            </div>
+                            <div class="col-md-1 col-sm-1 text-center batch-text-col">
+                                <p class="batch-text-p status-text"> {{ "processing" if chamber[0]|length > 0 }}</p>
+                            </div>
+                            <div class="col-md-3 col-sm-3 text-center">
+                                <div class="col-md-6 col-sm-6">
+                                    <button type="button" id="submitVerify"
+                                        class="btn btn-primary btn-block btn-long-word"
+                                        onclick="sendVerifyChamber({{ loop.index }})"
+                                        {{ "disabled" if chamber|length > 0 }}>Check Chamber</button>
+
+                                </div>
+                                <div class="col-md-5 col-sm-5 col-sm-offset-1 ">
+                                    <button type="button" id="resetVerifybtn" class="btn btn-default btn-block"
+                                        onclick="resetVerify({{ loop.index }})"
+                                        {{ "disabled" if chamber|length > 0 }}>Reset</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% for item in tests %}
+                    <div class="batch-col-row">
+                        {{ info['chassis_name'] }}{{ loop.index }}
+                        <div class="row batch-row-detail {{ "processing" if item[0]|length > 0 }}"
+                            id="batch-col-row-{{ loop.index }}000">
+                            <div class="col-md-2 col-sm-2 text-center">
+                                <input id="slot_no{{ loop.index }}000" class="hidden batch-slot_no"
+                                    value="{{ loop.index }}" />
+                                <input id="slot_location{{ loop.index }}000" class="hidden batch-slot_location"
+                                    value="{{ info['chassis_name'] }}{{ loop.index }}" />
+                                <p class="batch-text-p">
+                                    {{ info['chassis_name'] }}{{ loop.index }}
+                                </p>
+                            </div>
+                            <div class="col-md-2 col-sm-2 batch-input-col">
+                                <input id="sn{{ loop.index }}000" type="text" class="form-control batch-sn" onkeyup="this.value = this.value.toUpperCase();"
+                                    value="{{ item[0].serial_number if item[0]|length > 0 }}"
+                                    {{ "disabled" if item[0]|length > 0 }} />
+                            </div>
+                            {% if info["parameter"] | length > 0 %}
+                            <div class="col-md-2 col-sm-2 batch-input-col">
+                                <div class="col-md-12 col-sm-12">
+                                    <input id="param{{ loop.index }}000" type="text" class="form-control option-param" 
+                                        value="" {{ "disabled" if item[0]|length > 0 }} />
+                                </div>
+                            </div>
+                            {% if item[0] | length > 0 %}
+                            <div class="col-md-2 col-sm-2 text-center batch-text-col">
+                                <div class="col-md-12 col-sm-12">
+                                    <input disabled id="logop{{ loop.index }}000" type="text"
+                                        class="form-control option-param" value="{{ item[0].logop }}" />
+                                </div>
+                            </div>
+                            {% else %}
+                            <div class="col-md-2 col-sm-2 text-center batch-text-col">
+                                <select class="form-control logop" id="logop{{ loop.index }}000">
+                                    {% for logop in logops %}
+                                    <option value="{{ logop.name }}">{{ logop.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            {% endif %}
+                            <div class="col-md-1 col-sm-1 text-center batch-text-col">
+                                <p class="batch-text-p status-text"> {{ "processing" if item[0]|length > 0 }}</p>
+                            </div>
+                            {% else %}
+                            <div class="col-md-4 col-sm-4 text-center batch-text-col">
+                                <p class="batch-text-p status-text"> {{ "processing" if item[0]|length > 0 }}</p>
+                            </div>
+                            {% endif %}
+                            <div class="col-md-3 col-sm-3 text-center">
+                                <div class="col-md-6 col-sm-6">
+                                    <button type="button" id="submitVerify"
+                                        class="btn btn-primary btn-block btn-long-word"
+                                        onclick="sendVerify({{ loop.index }}000)"
+                                        {{ "disabled" if item[0]|length > 0 }}>Verify
+                                        ODC</button>
+
+                                </div>
+                                <div class="col-md-5 col-sm-5 col-sm-offset-1 ">
+                                    <button type="button" id="resetVerifybtn" class="btn btn-default btn-block"
+                                        onclick="resetVerify({{ loop.index }}000)"
+                                        {{ "disabled" if item[0]|length > 0 }}>Reset</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row batch-row-detail {{ "processing" if item[1]|length > 0 }}"
+                            id="batch-col-row-{{ loop.index }}001">
+                            <div class="col-md-2 col-sm-2 text-center">
+                                <input id="slot_no{{ loop.index }}001" class="hidden batch-slot_no"
+                                    value="{{ loop.index }}_1" />
+                                <input id="slot_location{{ loop.index }}001" class="hidden batch-slot_location"
+                                    value="{{ info['chassis_name'] }}{{ loop.index }}_1" />
+                                <p class="batch-text-p">
+                                    {{ info['chassis_name'] }}{{ loop.index }}_1
+                                </p>
+                            </div>
+                            <div class="col-md-2 col-sm-2 batch-input-col">
+                                <input id="sn{{ loop.index }}001" type="text" class="form-control batch-sn" onkeyup="this.value = this.value.toUpperCase();"
+                                    value="{{ item[1].serial_number if item[1]|length > 0 }}"
+                                    {{ "disabled" if item[1]|length > 0 }} />
+                            </div>
+                            {% if info["parameter"] | length > 0 %}
+                            <div class="col-md-2 col-sm-2 batch-input-col">
+                                <div class="col-md-12 col-sm-12">
+                                    <input id="param{{ loop.index }}001" type="text" class="form-control option-param"
+                                        value="" {{ "disabled" if item[1]|length > 0 }} />
+                                </div>
+                            </div>
+                            {% if item[1] | length > 0 %}
+                            <div class="col-md-2 col-sm-2 text-center batch-text-col">
+                                <div class="col-md-12 col-sm-12">
+                                    <input disabled id="logop{{ loop.index }}001" type="text"
+                                        class="form-control option-param" value="{{ item[1].logop }}" />
+                                </div>
+                            </div>
+                            {% else %}
+                            <div class="col-md-2 col-sm-2 text-center batch-text-col">
+                                <select class="form-control logop" id="logop{{ loop.index }}001">
+                                    {% for logop in logops %}
+                                    <option value="{{ logop.name }}">{{ logop.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            {% endif %}
+                            <div class="col-md-1 col-sm-1 text-center batch-text-col">
+                                <p class="batch-text-p status-text"> {{ "processing" if item[1]|length > 0 }}</p>
+                            </div>
+                            {% else %}
+                            <div class="col-md-4 col-sm-4 text-center batch-text-col">
+                                <p class="batch-text-p status-text"> {{ "processing" if item[1]|length > 0 }}</p>
+                            </div>
+                            {% endif %}
+                            <div class="col-md-3 col-sm-3 text-center">
+                                <div class="col-md-6 col-sm-6">
+                                    <button type="button" id="submitVerify"
+                                        class="btn btn-primary btn-block btn-long-word"
+                                        onclick="sendVerify({{ loop.index }}001)"
+                                        {{ "disabled" if item[1]|length > 0 }}>Verify
+                                        ODC</button>
+
+                                </div>
+                                <div class="col-md-5 col-sm-5 col-sm-offset-1 ">
+                                    <button type="button" id="resetVerifybtn" class="btn btn-default btn-block"
+                                        onclick="resetVerify({{ loop.index }}001)"
+                                        {{ "disabled" if item[1]|length > 0 }}>Reset</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row batch-row-detail {{ "processing" if item[2]|length > 0 }}"
+                            id="batch-col-row-{{ loop.index }}002">
+                            <div class="col-md-2 col-sm-2 text-center">
+                                <input id="slot_no{{ loop.index }}002" class="hidden batch-slot_no"
+                                    value="{{ loop.index }}_2" />
+                                <input id="slot_location{{ loop.index }}002" class="hidden batch-slot_location"
+                                    value="{{ info['chassis_name'] }}{{ loop.index }}_2" />
+                                <p class="batch-text-p">
+                                    {{ info['chassis_name'] }}{{ loop.index }}_2
+                                </p>
+                            </div>
+                            <div class="col-md-2 col-sm-2 batch-input-col">
+                                <input id="sn{{ loop.index }}002" type="text" class="form-control batch-sn" onkeyup="this.value = this.value.toUpperCase();"
+                                    value="{{ item[2].serial_number if item[2]|length > 0 }}"
+                                    {{ "disabled" if item[2]|length > 0 }} />
+                            </div>
+                            {% if info["parameter"] | length > 0 %}
+                            <div class="col-md-2 col-sm-2 batch-input-col">
+                                <div class="col-md-12 col-sm-12">
+                                    <input id="param{{ loop.index }}002" type="text" class="form-control option-param"
+                                        value="" {{ "disabled" if item[2]|length > 0 }} />
+                                </div>
+                            </div>
+                            {% if item[2] | length > 0 %}
+                            <div class="col-md-2 col-sm-2 text-center batch-text-col">
+                                <div class="col-md-12 col-sm-12">
+                                    <input disabled id="logop{{ loop.index }}002" type="text"
+                                        class="form-control option-param" value="{{ item[2].logop }}" />
+                                </div>
+                            </div>
+                            {% else %}
+                            <div class="col-md-2 col-sm-2 text-center batch-text-col">
+                                <select class="form-control logop" id="logop{{ loop.index }}002">
+                                    {% for logop in logops %}
+                                    <option value="{{ logop.name }}">{{ logop.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            {% endif %}
+                            <div class="col-md-1 col-sm-1 text-center batch-text-col">
+                                <p class="batch-text-p status-text"> {{ "processing" if item[2]|length > 0 }}</p>
+                            </div>
+                            {% else %}
+                            <div class="col-md-4 col-sm-4 text-center batch-text-col">
+                                <p class="batch-text-p status-text"> {{ "processing" if item[2]|length > 0 }}</p>
+                            </div>
+                            {% endif %}
+                            <div class="col-md-3 col-sm-3 text-center">
+                                <div class="col-md-6 col-sm-6">
+                                    <button type="button" id="submitVerify"
+                                        class="btn btn-primary btn-block btn-long-word"
+                                        onclick="sendVerify({{ loop.index }}002)"
+                                        {{ "disabled" if item[2]|length > 0 }}>Verify
+                                        ODC</button>
+
+                                </div>
+                                <div class="col-md-5 col-sm-5 col-sm-offset-1 ">
+                                    <button type="button" id="resetVerifybtn" class="btn btn-default btn-block"
+                                        onclick="resetVerify({{ loop.index }}002)"
+                                        {{ "disabled" if item[2]|length > 0 }}>Reset</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row batch-row-detail {{ "processing" if item[3]|length > 0 }}"
+                            id="batch-col-row-{{ loop.index }}003">
+                            <div class="col-md-2 col-sm-2 text-center">
+                                <input id="slot_no{{ loop.index }}003" class="hidden batch-slot_no"
+                                    value="{{ loop.index }}_3" />
+                                <input id="slot_location{{ loop.index }}003" class="hidden batch-slot_location"
+                                    value="{{ info['chassis_name'] }}{{ loop.index }}_3" />
+                                <p class="batch-text-p">
+                                    {{ info['chassis_name'] }}{{ loop.index }}_3
+                                </p>
+                            </div>
+                            <div class="col-md-2 col-sm-2 batch-input-col">
+                                <input id="sn{{ loop.index }}003" type="text" class="form-control batch-sn" onkeyup="this.value = this.value.toUpperCase();"
+                                    value="{{ item[3].serial_number if item[3]|length > 0 }}"
+                                    {{ "disabled" if item[3]|length > 0 }} />
+                            </div>
+                            {% if info["parameter"] | length > 0 %}
+                            <div class="col-md-2 col-sm-2 batch-input-col">
+                                <div class="col-md-12 col-sm-12">
+                                    <input id="param{{ loop.index }}003" type="text" class="form-control option-param"
+                                        value="" {{ "disabled" if item[3]|length > 0 }} />
+                                </div>
+                            </div>
+                            {% if item[3] | length > 0 %}
+                            <div class="col-md-2 col-sm-2 text-center batch-text-col">
+                                <div class="col-md-12 col-sm-12">
+                                    <input disabled id="logop{{ loop.index }}003" type="text"
+                                        class="form-control option-param" value="{{ item[3].logop }}" />
+                                </div>
+                            </div>
+                            {% else %}
+                            <div class="col-md-2 col-sm-2 text-center batch-text-col">
+                                <select class="form-control logop" id="logop{{ loop.index }}003">
+                                    {% for logop in logops %}
+                                    <option value="{{ logop.name }}">{{ logop.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            {% endif %}
+                            <div class="col-md-1 col-sm-1 text-center batch-text-col">
+                                <p class="batch-text-p status-text"> {{ "processing" if item[3]|length > 0 }}</p>
+                            </div>
+                            {% else %}
+                            <div class="col-md-4 col-sm-4 text-center batch-text-col">
+                                <p class="batch-text-p status-text"> {{ "processing" if item[3]|length > 0 }}</p>
+                            </div>
+                            {% endif %}
+                            <div class="col-md-3 col-sm-3 text-center">
+                                <div class="col-md-6 col-sm-6">
+                                    <button type="button" id="submitVerify"
+                                        class="btn btn-primary btn-block btn-long-word"
+                                        onclick="sendVerify({{ loop.index }}003)"
+                                        {{ "disabled" if item[3]|length > 0 }}>Verify
+                                        ODC</button>
+
+                                </div>
+                                <div class="col-md-5 col-sm-5 col-sm-offset-1 ">
+                                    <button type="button" id="resetVerifybtn" class="btn btn-default btn-block"
+                                        onclick="resetVerify({{ loop.index }}003)"
+                                        {{ "disabled" if item[3]|length > 0 }}>Reset</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row batch-row-detail {{ "processing" if item[4]|length > 0 }}"
+                            id="batch-col-row-{{ loop.index }}004">
+                            <div class="col-md-2 col-sm-2 text-center">
+                                <input id="slot_no{{ loop.index }}004" class="hidden batch-slot_no"
+                                    value="{{ loop.index }}_4" />
+                                <input id="slot_location{{ loop.index }}004" class="hidden batch-slot_location"
+                                    value="{{ info['chassis_name'] }}{{ loop.index }}_4" />
+                                <p class="batch-text-p">
+                                    {{ info['chassis_name'] }}{{ loop.index }}_4
+                                </p>
+                            </div>
+                            <div class="col-md-2 col-sm-2 batch-input-col">
+                                <input id="sn{{ loop.index }}004" type="text" class="form-control batch-sn" onkeyup="this.value = this.value.toUpperCase();"
+                                    value="{{ item[4].serial_number if item[4]|length > 0 }}"
+                                    {{ "disabled" if item[4]|length > 0 }} />
+                            </div>
+                            {% if info["parameter"] | length > 0 %}
+                            <div class="col-md-2 col-sm-2 batch-input-col">
+                                <div class="col-md-12 col-sm-12">
+                                    <input id="param{{ loop.index }}004" type="text" class="form-control option-param"
+                                        value="" {{ "disabled" if item[4]|length > 0 }} />
+                                </div>
+                            </div>
+                            {% if item[4] | length > 0 %}
+                            <div class="col-md-2 col-sm-2 text-center batch-text-col">
+                                <div class="col-md-12 col-sm-12">
+                                    <input disabled id="logop{{ loop.index }}004" type="text"
+                                        class="form-control option-param" value="{{ item[4].logop }}" />
+                                </div>
+                            </div>
+                            {% else %}
+                            <div class="col-md-2 col-sm-2 text-center batch-text-col">
+                                <select class="form-control logop" id="logop{{ loop.index }}004">
+                                    {% for logop in logops %}
+                                    <option value="{{ logop.name }}">{{ logop.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            {% endif %}
+                            <div class="col-md-1 col-sm-1 text-center batch-text-col">
+                                <p class="batch-text-p status-text"> {{ "processing" if item[4]|length > 0 }}</p>
+                            </div>
+                            {% else %}
+                            <div class="col-md-4 col-sm-4 text-center batch-text-col">
+                                <p class="batch-text-p status-text"> {{ "processing" if item[4]|length > 0 }}</p>
+                            </div>
+                            {% endif %}
+                            <div class="col-md-3 col-sm-3 text-center">
+                                <div class="col-md-6 col-sm-6">
+                                    <button type="button" id="submitVerify"
+                                        class="btn btn-primary btn-block btn-long-word"
+                                        onclick="sendVerify({{ loop.index }}004)"
+                                        {{ "disabled" if item[4]|length > 0 }}>Verify
+                                        ODC</button>
+
+                                </div>
+                                <div class="col-md-5 col-sm-5 col-sm-offset-1 ">
+                                    <button type="button" id="resetVerifybtn" class="btn btn-default btn-block"
+                                        onclick="resetVerify({{ loop.index }}004)"
+                                        {{ "disabled" if item[4]|length > 0 }}>Reset</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="row hidden" style="margin-bottom:10px;">
+                    <div class="col-md-8">
+                        <input disabled name="slot_no" id="slot_no" type="text" class="form-control" value="" />
+                    </div>
+                </div>
+
+                <div class="row alert alert-danger" role="alert">
+                    <p class="text-center">Please insert the PIM module to the Test Chassis.</p>
+                </div>
+                <div class="row modal-btn">
+                    <button type="button" id="submitScanin" class="btn btn-primary" onclick="sendScanin()"
+                        data-dismiss="modal" disabled="disabled">Submit</button>
+                    <!-- <button type="button" class="btn btn-default" onclick="resetScanin()">Reset</button> -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="statusModal" tabindex="-1" role="dialog" aria-labelledby="statusModalLabel">
+    <div class="modal-dialog" role="document" style="width:50%">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color:#EBEBE0;border-bottom:3px solid #9ba300;">
+                <button type="button" onClick="" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="batchModalLabel">Status</span></h4>
+            </div>
+            <div class="modal-body">
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Confirm CheckOut -->
+<div class="modal fade" id="myConfirmCheckOut" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document" style="width:400px;">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color:#EBEBE0;border-bottom:3px solid #9ba300;">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Confirm Delivery Out Slot <span
+                        class="slot-no-heading"></span></h4>
+            </div>
+            <div class="modal-body">
+                Do you want to Delivery Out this serial number?
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="submitCheckOut" class="btn btn-primary" onclick="sendDeliveryout()"
+                    data-dismiss="modal">Submit</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Message -->
+<div class="modal fade" role="dialog" id="myModalMessage" aria-labelledby="gridSystemModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="gridSystemModalLabel">Message</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-4" id="msg_modal" style="min-width: 100%"></div>
+
+                    <!--<div class="col-md-4 col-md-offset-4">22</div>-->
+                </div>
+                <div class="row">
+                    <div class="col-md-4"></div>
+                    <!--<div class="col-md-4 col-md-offset-4">22</div>-->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- Error -->
+<div class="modal fade" role="dialog" id="myModalError" aria-labelledby="gridSystemModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="gridSystemModalLabel">Error</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-4" id="error_msg_modal" style="min-width: 100%"></div>
+
+                    <!--<div class="col-md-4 col-md-offset-4">22</div>-->
+                </div>
+                <div class="row">
+                    <div class="col-md-4"></div>
+                    <!--<div class="col-md-4 col-md-offset-4">22</div>-->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<!-- Loading -->
+<div class="modal fade" role="dialog" id="myModalLoading" aria-labelledby="gridSystemModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="gridSystemModalLabel">Loading</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-4">Please Wait</div>
+                    <!--<div class="col-md-4 col-md-offset-4">22</div>-->
+                </div>
+            </div>
+
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<!-- Response for checkout -->
+<div class="modal fade" role="dialog" id="myModalChkout" aria-labelledby="gridSystemModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="gridSystemModalLabel">Checkout Information</h4>
+                <div class="col-md-4" style="min-width: 100%" id="chkChassis"></div>
+                <br>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-4" id="chkOut" style="min-width: 100%"></div>
+
+                    <!--<div class="col-md-4 col-md-offset-4">22</div>-->
+                </div>
+                <div class="row">
+                    <div class="col-md-4"></div>
+                    <!--<div class="col-md-4 col-md-offset-4">22</div>-->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<!-- popup test-->
+<div class="popover" role="tooltip" id="test_popup">
+    <div class="arrow"></div>
+    <h3 class="popover-header"></h3>
+    <div class="popover-body">
+        <div class="list-group">
+            <button style="color:#000" class="list-group-item" onclick="viewInteraction(this)">Interaction</button>
+        </div>
+
+
+    </div>
+
+
+
+</div>
+
+<!-- popup empty-->
+<div class="popover" role="tooltip" id="empty_popup">
+    <div class="arrow"></div>
+    <h3 class="popover-header"></h3>
+    <div class="popover-body">
+        <div class="list-group">
+            <button disabled href="#" class="list-group-item" style="color:#999999">View</button>
+            <button disabled id="locksi" href="#" style="color:#999999" class="list-group-item" data-toggle="modal"
+                data-target="#myModal" data-id="'+slot+'||'+commentTxt+'">Scan-in</button>
+            <button disabled href="#" class="list-group-item" style="color:#999999" data-toggle="modal"
+                data-target="#myConfirm" onmousedown=setClickedslot()>Abort</button>
+            <button disabled href="#" style="color:#999999" class="list-group-item">Delivery</button>
+            <button disabled style="color:#999999" href="#" class="list-group-item">Interaction</button>
+        </div>
+
+    </div>
+
+
+
+</div>
+
+<!-- delivery-out batch modal -->
+<div class="modal fade" id="checkoutbatch" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" onClick="" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+
+                <h4 class="modal-title" id="myModalLabel">Check-out Batch</h4>
+            </div>
+            <div class="modal-body">
+
+                <div class="col-sm-12">
+                    <div class="panel leftpanelcheckbox select-all">
+                        <label for="all"> <input id="all" type="checkbox" style="width: 16px;
+                    height: 16px;" />
+                            Select all </label>
+                    </div>
+                </div>
+
+                <div class="checkout-slot">
+                    {% for item in tests %}
+                    <div class="col-sm-3 {{ item[0]["test_info"]["status"]|lower if item[0]|length > 0   }}">
+                        <div class="panel {{ "leftpanel" if (loop.index %4) != 0}}">
+                            <form action="/playbox" method="post">
+                                <div class="panel-heading checked-box" id="{{ loop.index }}">
+                                    <div class="row">
+                                        <div class="col-md-4" id="A01">
+                                            <span class="chasisname">{{ info['chassis_name'] }}{{ loop.index }}</span>
+                                        </div>
+                                        <div class="col-md-4 text-center">
+                                            <span
+                                                class="serial_number"><b>{{ item[0].serial_number if item[0]|length > 0 }}</b><span
+                                                    id=""></span></span>
+                                        </div>
+                                        <div class="col-md-4">
+                                            {% if item[0]|length > 0  %}
+                                            {% if item[0]["test_info"]["status"]|lower == 'failed' or item[0]["test_info"]["status"]|lower == 'passes' or item[0]["test_info"]["status"]|lower == 'aborted' %}
+                                            <div class="rows text-right addmarginright">
+                                                <input id="box{{ loop.index }}" type="checkbox" />
+                                            </div>
+                                            {% endif  %}
+                                            {% endif  %}
+                                        </div>
+                                    </div>
+                                    <input class="uut_log_dir hidden" type="input"
+                                        value="{{ item[0].uut_log_dir if item[0]|length > 0 }}" />
+                                    <input class="log_template hidden" type="input"
+                                        value="{{ info['log_template'] }}" />
+                                    {% if item[0]|length > 0  %}
+                                    <input class="operation_id hidden" type="input" id="operation_id"
+                                        name="operation_id" value="{{ item[0]["operation_id"] | replace("th","") }}" />
+                                    <input class="result hidden" type="input"
+                                        value="{{ item[0]["test_info"]["status"] if item[0]|length > 0 }}" />
+                                    <input class="test_mode hidden" type="input" id="test_mode" name="test_mode"
+                                        value="{{ item[0]["test_mode"] }}" />
+                                    <input class="logop hidden" type="input" id="logop" name="logop"
+                                        value="{{ item[0]["logop"] }}" />
+                                    <input class="message hidden" type="input"
+                                        value="{{ item[0]["test_info"]["message"] if item[0]|length > 0  }}" />
+                                    <input class="batch_id hidden" type="input" style="width: 20px;"
+                                        value="{{ item[0].batch_id }}" />
+                                    <input class="test_fail hidden" type="input"
+                                        value="{{ item[0]["test_info"]["test_db"] if item[0]|length > 0  }}" />
+                                    <input class="test_abort hidden" type="input"
+                                        value="{{ item[0]["test_info"]["created"] if item[0]|length > 0  }}" />
+                                    <input id="slot_location" name="slot_location" type="text"
+                                        class="slot_location hidden"
+                                        value="{{ info['chassis_name'] }}{{ loop.index }}" />
+                                    <input id="slot_no" name="slot_no" type="text" class="slot_no hidden"
+                                        value="{{ loop.index }}" />
+                                    <input id="serial_number" name="serial_number" type="text"
+                                        class="form-control hidden"
+                                        value="{{ item[0].serial_number if item[0]|length > 0 }}" />
+                                    {% endif  %}
+                                </div>
+                            </form>
+                            <form action="/playbox" method="post">
+                                <div class="panel-body checked-box" id="{{ loop.index }}_1">
+                                    <div class="row">
+                                        <div class="col-md-4" id="A01">
+                                            <span class="chasisname" style="color:#cccccc;"">{{ info['chassis_name'] }}{{ loop.index }}_1</span>
+                                        </div>
+                                        <div class=" col-md-4 text-center">
+                                                <span
+                                                    class="serial_number"><b>{{ item[1].serial_number if item[1]|length > 0 }}</b><span
+                                                        id=""></span></span>
+                                        </div>
+                                        <div class="col-md-4">
+                                            {% if item[1]|length > 0  %}
+                                            {% if item[1]["test_info"]["status"]|lower == 'failed' or item[1]["test_info"]["status"]|lower == 'passes' or item[1]["test_info"]["status"]|lower == 'aborted' %}
+                                            <div class="rows text-right addmarginright">
+                                                <input id="box{{ loop.index }}_1" type="checkbox" />
+                                            </div>
+                                            {% endif  %}
+                                            {% endif  %}
+                                        </div>
+                                    </div>
+                                    <input class="uut_log_dir hidden" type="input"
+                                        value="{{ item[1].uut_log_dir if item[1]|length > 0 }}" />
+                                    <input class="log_template hidden" type="input"
+                                        value="{{ info['log_template'] }}" />
+                                    {% if item[1]|length > 0  %}
+                                    <input class="operation_id hidden" type="input" id="operation_id"
+                                        name="operation_id" value="{{ item[1]["operation_id"] | replace("th","") }}" />
+                                    <input class="result hidden" type="input"
+                                        value="{{ item[1]["test_info"]["status"] if item[1]|length > 0 }}" />
+                                    <input class="test_mode hidden" type="input" id="test_mode" name="test_mode"
+                                        value="{{ item[1]["test_mode"] }}" />
+                                    <input class="logop hidden" type="input" id="logop" name="logop"
+                                        value="{{ item[1]["logop"] }}" />
+                                    <input class="message hidden" type="input"
+                                        value="{{ item[1]["test_info"]["message"] if item[1]|length > 0  }}" />
+                                    <input class="batch_id hidden" type="input" style="width: 20px;"
+                                        value="{{ item[1].batch_id }}" />
+                                    <input class="test_fail hidden" type="input"
+                                        value="{{ item[1]["test_info"]["test_db"] if item[1]|length > 0  }}" />
+                                    <input class="test_abort hidden" type="input"
+                                        value="{{ item[1]["test_info"]["created"] if item[1]|length > 0  }}" />
+                                    <input id="slot_location" name="slot_location" type="text"
+                                        class="slot_location hidden"
+                                        value="{{ info['chassis_name'] }}{{ loop.index }}_1" />
+                                    <input id="slot_no" name="slot_no" type="text" class="slot_no hidden"
+                                        value="{{ loop.index }}_1" />
+                                    <input id="serial_number" name="serial_number" type="text"
+                                        class="form-control hidden"
+                                        value="{{ item[1].serial_number if item[1]|length > 0 }}" />
+                                    {% endif  %}
+                                </div>
+                            </form>
+                            <form action="/playbox" method="post">
+                                <div class="panel-body checked-box" id="{{ loop.index }}_2">
+                                    <div class="row">
+                                        <div class="col-md-4" id="A01">
+                                            <span class="chasisname" style="color:#cccccc;"">{{ info['chassis_name'] }}{{ loop.index }}_2</span>
+                                        </div>
+                                        <div class=" col-md-4 text-center">
+                                                <span
+                                                    class="serial_number"><b>{{ item[2].serial_number if item[2]|length > 0 }}</b><span
+                                                        id=""></span></span>
+                                        </div>
+                                        <div class="col-md-4">
+                                            {% if item[2]|length > 0  %}
+                                            {% if item[2]["test_info"]["status"]|lower == 'failed' or item[2]["test_info"]["status"]|lower == 'passes' or item[2]["test_info"]["status"]|lower == 'aborted' %}
+                                            <div class="rows text-right addmarginright">
+                                                <input id="box{{ loop.index }}_2" type="checkbox" />
+                                            </div>
+                                            {% endif  %}
+                                            {% endif  %}
+                                        </div>
+                                    </div>
+                                    <input class="uut_log_dir hidden" type="input"
+                                        value="{{ item[2].uut_log_dir if item[2]|length > 0 }}" />
+                                    <input class="log_template hidden" type="input"
+                                        value="{{ info['log_template'] }}" />
+                                    {% if item[2]|length > 0  %}
+                                    <input class="operation_id hidden" type="input" id="operation_id"
+                                        name="operation_id" value="{{ item[2]["operation_id"] | replace("th","") }}" />
+                                    <input class="result hidden" type="input"
+                                        value="{{ item[2]["test_info"]["status"] if item[2]|length > 0 }}" />
+                                    <input class="test_mode hidden" type="input" id="test_mode" name="test_mode"
+                                        value="{{ item[2]["test_mode"] }}" />
+                                    <input class="logop hidden" type="input" id="logop" name="logop"
+                                        value="{{ item[2]["logop"] }}" />
+                                    <input class="message hidden" type="input"
+                                        value="{{ item[2]["test_info"]["message"] if item[2]|length > 0  }}" />
+                                    <input class="batch_id hidden" type="input" style="width: 20px;"
+                                        value="{{ item[2].batch_id }}" />
+                                    <input class="test_fail hidden" type="input"
+                                        value="{{ item[2]["test_info"]["test_db"] if item[2]|length > 0  }}" />
+                                    <input class="test_abort hidden" type="input"
+                                        value="{{ item[2]["test_info"]["created"] if item[2]|length > 0  }}" />
+                                    <input id="slot_location" name="slot_location" type="text"
+                                        class="slot_location hidden"
+                                        value="{{ info['chassis_name'] }}{{ loop.index }}_2" />
+                                    <input id="slot_no" name="slot_no" type="text" class="slot_no hidden"
+                                        value="{{ loop.index }}_2" />
+                                    <input id="serial_number" name="serial_number" type="text"
+                                        class="form-control hidden"
+                                        value="{{ item[2].serial_number if item[2]|length > 0 }}" />
+                                    {% endif  %}
+                                </div>
+                            </form>
+                            <form action="/playbox" method="post">
+                                <div class="panel-body checked-box" id="{{ loop.index }}_3">
+                                    <div class="row">
+                                        <div class="col-md-4" id="A01">
+                                            <span class="chasisname" style="color:#cccccc;"">{{ info['chassis_name'] }}{{ loop.index }}_3</span>
+                                        </div>
+                                        <div class=" col-md-4 text-center">
+                                                <span
+                                                    class="serial_number"><b>{{ item[3].serial_number if item[3]|length > 0 }}</b><span
+                                                        id=""></span></span>
+                                        </div>
+                                        <div class="col-md-4">
+                                            {% if item[3]|length > 0  %}
+                                            {% if item[3]["test_info"]["status"]|lower == 'failed' or item[3]["test_info"]["status"]|lower == 'passes' or item[3]["test_info"]["status"]|lower == 'aborted' %}
+                                            <div class="rows text-right addmarginright">
+                                                <input id="box{{ loop.index }}_3" type="checkbox" />
+                                            </div>
+                                            {% endif  %}
+                                            {% endif  %}
+                                        </div>
+                                    </div>
+                                    <input class="uut_log_dir hidden" type="input"
+                                        value="{{ item[3].uut_log_dir if item[3]|length > 0 }}" />
+                                    <input class="log_template hidden" type="input"
+                                        value="{{ info['log_template'] }}" />
+                                    {% if item[3]|length > 0  %}
+                                    <input class="operation_id hidden" type="input" id="operation_id"
+                                        name="operation_id" value="{{ item[3]["operation_id"] | replace("th","") }}" />
+                                    <input class="result hidden" type="input"
+                                        value="{{ item[3]["test_info"]["status"] if item[3]|length > 0 }}" />
+                                    <input class="test_mode hidden" type="input" id="test_mode" name="test_mode"
+                                        value="{{ item[3]["test_mode"] }}" />
+                                    <input class="logop hidden" type="input" id="logop" name="logop"
+                                        value="{{ item[3]["logop"] }}" />
+                                    <input class="message hidden" type="input"
+                                        value="{{ item[3]["test_info"]["message"] if item[3]|length > 0  }}" />
+                                    <input class="batch_id hidden" type="input" style="width: 20px;"
+                                        value="{{ item[3].batch_id }}" />
+                                    <input class="test_fail hidden" type="input"
+                                        value="{{ item[3]["test_info"]["test_db"] if item[3]|length > 0  }}" />
+                                    <input class="test_abort hidden" type="input"
+                                        value="{{ item[3]["test_info"]["created"] if item[3]|length > 0  }}" />
+                                    <input id="slot_location" name="slot_location" type="text"
+                                        class="slot_location hidden"
+                                        value="{{ info['chassis_name'] }}{{ loop.index }}_3" />
+                                    <input id="slot_no" name="slot_no" type="text" class="slot_no hidden"
+                                        value="{{ loop.index }}_3" />
+                                    <input id="serial_number" name="serial_number" type="text"
+                                        class="form-control hidden"
+                                        value="{{ item[3].serial_number if item[3]|length > 0 }}" />
+                                    {% endif  %}
+                                </div>
+                            </form>
+                            <form action="/playbox" method="post">
+                                <div class="panel-body checked-box" id="{{ loop.index }}_4">
+                                    <div class="row">
+                                        <div class="col-md-4" id="A01">
+                                            <span class="chasisname" style="color:#cccccc;"">{{ info['chassis_name'] }}{{ loop.index }}_4</span>
+                                        </div>
+                                        <div class=" col-md-4 text-center">
+                                                <span
+                                                    class="serial_number"><b>{{ item[4].serial_number if item[4]|length > 0 }}</b><span
+                                                        id=""></span></span>
+                                        </div>
+                                        <div class="col-md-4">
+                                            {% if item[4]|length > 0  %}
+                                            {% if item[4]["test_info"]["status"]|lower == 'failed' or item[4]["test_info"]["status"]|lower == 'passes' or item[4]["test_info"]["status"]|lower == 'aborted' %}
+                                            <div class="rows text-right addmarginright">
+                                                <input id="box{{ loop.index }}_4" type="checkbox" />
+                                            </div>
+                                            {% endif  %}
+                                            {% endif  %}
+                                        </div>
+                                    </div>
+                                    <input class="uut_log_dir hidden" type="input"
+                                        value="{{ item[4].uut_log_dir if item[4]|length > 0 }}" />
+                                    <input class="log_template hidden" type="input"
+                                        value="{{ info['log_template'] }}" />
+                                    {% if item[4]|length > 0  %}
+                                    <input class="operation_id hidden" type="input" id="operation_id"
+                                        name="operation_id" value="{{ item[4]["operation_id"] | replace("th","") }}" />
+                                    <input class="result hidden" type="input"
+                                        value="{{ item[4]["test_info"]["status"] if item[4]|length > 0 }}" />
+                                    <input class="test_mode hidden" type="input" id="test_mode" name="test_mode"
+                                        value="{{ item[4]["test_mode"] }}" />
+                                    <input class="logop hidden" type="input" id="logop" name="logop"
+                                        value="{{ item[4]["logop"] }}" />
+                                    <input class="message hidden" type="input"
+                                        value="{{ item[4]["test_info"]["message"] if item[4]|length > 0  }}" />
+                                    <input class="batch_id hidden" type="input" style="width: 20px;"
+                                        value="{{ item[4].batch_id }}" />
+                                    <input class="test_fail hidden" type="input"
+                                        value="{{ item[4]["test_info"]["test_db"] if item[4]|length > 0  }}" />
+                                    <input class="test_abort hidden" type="input"
+                                        value="{{ item[4]["test_info"]["created"] if item[4]|length > 0  }}" />
+                                    <input id="slot_location" name="slot_location" type="text"
+                                        class="slot_location hidden"
+                                        value="{{ info['chassis_name'] }}{{ loop.index }}_4" />
+                                    <input id="slot_no" name="slot_no" type="text" class="slot_no hidden"
+                                        value="{{ loop.index }}_4" />
+                                    <input id="serial_number" name="serial_number" type="text"
+                                        class="form-control hidden"
+                                        value="{{ item[4].serial_number if item[4]|length > 0 }}" />
+                                    {% endif  %}
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% for item in chambers %}
+                    <div class="col-sm-3 checked-box {{ item["test_info"]["status"]|lower if item|length > 0 }}"
+                        id="{{ loop.index + info['slot'] }}">
+                        <div class=" panel {{ "leftpanel" if (loop.index %4) != 0}}">
+
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <div class="col-md-6" id="A01">
+                                        <span class="chasisname">CHAMBER{{ loop.index }}</span>
+                                    </div>
+                                    <div class="col-md-6">
+                                        {% if item|length > 0  %}
+                                        {% if item["test_info"]["status"]|lower == 'failed' or item["test_info"]["status"]|lower == 'passes' or item["test_info"]["status"]|lower == 'aborted' %}
+                                        <div class="rows text-right addmarginright">
+                                            <input id="box{{ loop.index }}" type="checkbox" />
+                                        </div>
+                                        {% endif  %}
+                                        {% endif  %}
+                                    </div>
+                                </div>
+                            </div>
+                            <form action="/playbox" method="post">
+                                <div class="panel-body">
+                                    <div><span
+                                            class="serial_number"><b>{{ item.serial_number if item|length > 0 }}</b><span
+                                                id=""></span></span>
+                                    </div>
+                                    <input class="uut_log_dir hidden" type="input" value="{{ item.uut_log_dir }}" />
+                                    <input class="log_template hidden" type="input"
+                                        value="{{ info['log_template'] }}" />
+                                    {% if item|length > 0  %}
+                                    <input class="operation_id hidden" type="input" id="operation_id"
+                                        name="operation_id" value="{{ item["operation_id"] | replace("th","") }}" />
+                                    <input class="result hidden" type="input"
+                                        value="{{ item["test_info"]["status"] if item|length > 0 }}" />
+                                    <input class="test_mode hidden" type="input" id="test_mode" name="test_mode"
+                                        value="{{ item["test_mode"] }}" />
+                                    <input class="logop hidden" type="input" id="logop" name="logop"
+                                        value="{{ item["logop"] }}" />
+                                    <input class="product_name hidden" type="input" id="product_name" name="product_name"
+                                        value="{{ item["product_name"] }}" />
+                                    <input class="message hidden" type="input"
+                                        value="{{ item["test_info"]["message"] if item|length > 0  }}" />
+                                    <input class="batch_id hidden" type="input" style="width: 20px;"
+                                        value="{{ item.batch_id }}" />
+                                    <input class="test_fail hidden" type="input"
+                                        value="{{ item["test_info"]["test_db"] if item|length > 0  }}" />
+                                    <input class="test_abort hidden" type="input"
+                                        value="{{ item["test_info"]["created"] if item|length > 0  }}" />
+                                    <input id="slot_location" name="slot_location" type="text"
+                                        class="slot_location hidden" value="chamber{{ loop.index + info['slot'] }}" />
+                                    <input id="slot_no" name="slot_no" type="text" class="slot_no hidden"
+                                        value="{{ loop.index }}" />
+                                    <input id="serial_number" name="serial_number" type="text"
+                                        class="form-control hidden"
+                                        value="{{ item.serial_number if item|length > 0 }}" />
+                                    {% endif  %}
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+
+                        <div class="modal-btn">
+                            <button type="button" id="retest" class="btn btn-default" onclick="ReTest()"
+                                disabled="disabled" data-dismiss="modal">Retest</button>
+
+                            <button type="button" id="submitdeliveryout" class="btn btn-primary"
+                                onclick="sendDeliveryoutBatch()" disabled="disabled"
+                                data-dismiss="modal">Submit</button>
+                            <!--<button type="button" class="btn btn-default" onclick="resetScanin()">Reset</button>-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- abort batch modal -->
+<div class="modal fade" id="abortbatch" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" onClick="" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+
+                <h4 class="modal-title" id="myModalLabel">Abort Batch</h4>
+            </div>
+            <div class="modal-body">
+
+                <div class="col-sm-12">
+                    <div class="panel leftpanelcheckbox select-all">
+                        <label> <input id="all-abort" type="checkbox" style="width: 16px;
+                        height: 16px;" />
+                            Select all </label>
+                    </div>
+                </div>
+                <div class="abort-slot">
+                    {% for item in tests %}
+                    <div class="col-sm-3 {{ item[0]["test_info"]["status"]|lower if item[0]|length > 0 }}">
+                        <div class="panel {{ "leftpanel" if (loop.index %4) != 0}}">
+                            <div class="panel-heading checked-box" id="{{ loop.index }}">
+                                <div class="row">
+                                    <input id="slot_location" name="slot_location" type="text"
+                                        class="slot_location hidden"
+                                        value="{{ info['chassis_name'] }}{{ loop.index }}" />
+                                    <div class="col-md-4" id="A01">
+                                        <span class="chasisname">{{ info['chassis_name'] }}{{ loop.index }}</span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <span
+                                            class="serial_number"><b>{{ item[0].serial_number if item[0]|length > 0 }}</b><span
+                                                id=""></span></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        {% if item[0]|length > 0  %}
+                                        {% if item[0]["test_info"]["status"]|lower == 'testing'  or item[0]["test_info"]["status"]|lower == 'failing'  %}
+
+                                        <div class="rows text-right addmarginright">
+                                            <input id="box{{ loop.index }}" type="checkbox" />
+                                        </div>
+                                        {% endif  %}
+                                        {% endif  %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-body checked-box" id="{{ loop.index }}_1">
+                                <div class="row">
+                                    <input id="slot_location" name="slot_location" type="text"
+                                        class="slot_location hidden"
+                                        value="{{ info['chassis_name'] }}{{ loop.index }}_1" />
+                                    <div class="col-md-4" id="A01">
+                                        <span class="chasisname"
+                                            style="color:#cccccc;">{{ info['chassis_name'] }}{{ loop.index }}_1</span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <span
+                                            class="serial_number"><b>{{ item[1].serial_number if item[1]|length > 0 }}</b><span
+                                                id=""></span></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        {% if item[1]|length > 0  %}
+                                        {% if item[1]["test_info"]["status"]|lower == 'testing'  or item[1]["test_info"]["status"]|lower == 'failing'  %}
+
+                                        <div class="rows text-right addmarginright">
+                                            <input id="box{{ loop.index }}_1" type="checkbox" />
+                                        </div>
+                                        {% endif  %}
+                                        {% endif  %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-body checked-box" id="{{ loop.index }}_2">
+                                <div class="row">
+                                    <input id="slot_location" name="slot_location" type="text"
+                                        class="slot_location hidden"
+                                        value="{{ info['chassis_name'] }}{{ loop.index }}_2" />
+                                    <div class="col-md-4" id="A01">
+                                        <span class="chasisname"
+                                            style="color:#cccccc;">{{ info['chassis_name'] }}{{ loop.index }}_2</span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <span
+                                            class="serial_number"><b>{{ item[2].serial_number if item[2]|length > 0 }}</b><span
+                                                id=""></span></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        {% if item[2]|length > 0  %}
+                                        {% if item[2]["test_info"]["status"]|lower == 'testing'  or item[2]["test_info"]["status"]|lower == 'failing'  %}
+
+                                        <div class="rows text-right addmarginright">
+                                            <input id="box{{ loop.index }}_2" type="checkbox" />
+                                        </div>
+                                        {% endif  %}
+                                        {% endif  %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-body checked-box" id="{{ loop.index }}_3">
+                                <div class="row">
+                                    <input id="slot_location" name="slot_location" type="text"
+                                        class="slot_location hidden"
+                                        value="{{ info['chassis_name'] }}{{ loop.index }}_3" />
+                                    <div class="col-md-4" id="A01">
+                                        <span class="chasisname"
+                                            style="color:#cccccc;">{{ info['chassis_name'] }}{{ loop.index }}_3</span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <span
+                                            class="serial_number"><b>{{ item[3].serial_number if item[3]|length > 3 }}</b><span
+                                                id=""></span></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        {% if item[3]|length > 0  %}
+                                        {% if item[3]["test_info"]["status"]|lower == 'testing'  or item[3]["test_info"]["status"]|lower == 'failing'  %}
+
+                                        <div class="rows text-right addmarginright">
+                                            <input id="box{{ loop.index }}_3" type="checkbox" />
+                                        </div>
+                                        {% endif  %}
+                                        {% endif  %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-body checked-box" id="{{ loop.index }}_4">
+                                <div class="row">
+                                    <input id="slot_location" name="slot_location" type="text"
+                                        class="slot_location hidden"
+                                        value="{{ info['chassis_name'] }}{{ loop.index }}_4" />
+                                    <div class="col-md-4" id="A01">
+                                        <span class="chasisname"
+                                            style="color:#cccccc;">{{ info['chassis_name'] }}{{ loop.index }}_4</span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <span
+                                            class="serial_number"><b>{{ item[4].serial_number if item[4]|length > 0 }}</b><span
+                                                id=""></span></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        {% if item[4]|length > 0  %}
+                                        {% if item[4]["test_info"]["status"]|lower == 'testing'  or item[4]["test_info"]["status"]|lower == 'failing'  %}
+
+                                        <div class="rows text-right addmarginright">
+                                            <input id="box{{ loop.index }}_4" type="checkbox" />
+                                        </div>
+                                        {% endif  %}
+                                        {% endif  %}
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% for item in chambers %}
+                    <div class="col-sm-3 {{ item["test_info"]["status"]|lower if item|length > 0   }}"
+                        id="slot-{{ loop.index + info['slot'] }}">
+
+                        <div class="panel {{ "leftpanel" if (loop.index %4) != 0}}">
+
+                            <div class="panel-heading checked-box" id="{{ loop.index + info['slot'] }}">
+                                <input id="slot_location" name="slot_location" type="text" class="slot_location hidden"
+                                    value="chamber{{ loop.index + info['slot'] }}" />
+                                <div class="row">
+                                    <div class="col-md-6" id="A01">
+                                        <span class="chasisname">CHAMBER{{ loop.index }}</span>
+                                    </div>
+                                    <div class="col-md-6">
+                                        {% if item|length > 0  %}
+                                        {% if item["test_info"]["status"]|lower == 'testing'  or item["test_info"]["status"]|lower == 'failing'  %}
+
+                                        <div class="rows text-right addmarginright">
+                                            <input id="box{{ loop.index }}" type="checkbox" />
+                                        </div>
+                                        {% endif  %}
+                                        {% endif  %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-body">
+                                <div><span class="serial_number"><b>{{ item.serial_number if item|length > 0 }}</b><span
+                                            id=""></span></span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+
+                        <div class="modal-btn">
+
+                            <button type="button" class="btn btn-primary" onclick="sendAbortBatch()"
+                                id="submitabortbatch" disabled="disabled" data-dismiss="modal">Submit</button>
+                            <!--<button type="button" class="btn btn-default" onclick="resetScanin()">Reset</button>-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

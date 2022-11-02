@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+{% set active_page = "menu3" %}
+{% block title %}{{ block_title }}{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+{% block content %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for category, message in messages %}
+<div class="alert alert-{{ category }} alert-dismissible" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+            aria-hidden="true">&times;</span></button>
+    <!-- <strong>Title</strong> --> {{ message }}
+</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
+<h1>Settings <span style="display: inline-block;"><a class="btn btn-primary" href="/logop/remove/" role="button">Remove
+            LOGOP</a></span>
+    <span style="display: inline-block;"><a class="btn btn-primary" href="/logop/add/" role="button">Add
+            LOGOP</a></span>
+    <span style="display: inline-block;"><a class="btn btn-primary" href="/setting/distribution/" role="button">
+            Distribution Server
+        </a></span>
+</h1>
+<form action="" method="post" onsubmit="" id="setting-form">
+    <fieldset>
+        <legend> General : </legend>
+
+        {% for item in settings if item.categories != "lock" %}
+        {% if item.title == 'Model' %}
+        <div class="row" style="margin-bottom:10px">
+            <div class="col-xs-4" style="text-align:right">
+                <b>{{ item.title }} : </b>
+            </div>
+            <div class="col-xs-4">
+                <select class="form-control {{ item.name }}" id="{{ item.name }}" name="{{ item.name }}"
+                    style="width:200px;margin-left:10px">
+                    <option value="normal" {{ "selected" if item.value == 'normal' }}>Normal</option>
+                    <option value="sub-slot" {{ "selected" if item.value == 'sub-slot' }}>Sub-Slot</option>
+                    <option value="bi" {{ "selected" if item.value == 'bi' }}>B/I</option>
+                </select>
+            </div>
+            <div class="col-xs-4" style="margin-left:-90px;margin-top:4px">
+                <span id="symbol-msg"></span>
+                <span id="stname-msg"></span>
+            </div>
+        </div>
+        {% else %}
+        <div class="row" style="margin-bottom:10px">
+            <div class="col-xs-4" style="text-align:right">
+                <b>{{ item.title }} : </b>
+            </div>
+            <div class="col-xs-4">
+                <input type="text" id="{{ item.name }}" name="{{ item.name }}" value="{{ item.value }}"
+                    style="width:200px;margin-left:10px" class="form-control">
+            </div>
+            <div class="col-xs-4" style="margin-left:-90px;margin-top:4px">
+                <span id="symbol-msg"></span>
+                <span id="stname-msg"></span>
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+        <!-- <div class="row" style="margin-bottom:10px">
+            <div class="col-xs-4" style="text-align:right">
+                <b>Operation : </b>
+            </div>
+            <div class="col-xs-4">
+                <input type="text" id="desc" name="desc" style="width:200px" class="form-control" required
+                    onkeyup="nospaces(this)">
+            </div>
+        </div>
+        <div class="row" style="margin-bottom:10px">
+            <div class="col-xs-4" style="text-align:right">
+                <b>Input parameter : </b>
+            </div>
+            <div class="col-xs-4">
+                <input type="text" id="input_parameter" name="input_parameter" style="width:200px" class="form-control"
+                    required onkeyup="nospaces(this)">
+            </div>
+        </div>
+        <div class="row" style="margin-bottom:10px">
+            <div class="col-xs-4" style="text-align:right">
+                <b>slot : </b>
+            </div>
+            <div class="col-xs-4">
+                <input type="text" id="slot" name="slot" style="width:200px" class="form-control" required
+                    onkeyup="nospaces(this)">
+            </div>
+        </div>
+        <div class="row" style="margin-bottom:10px">
+            <div class="col-xs-4" style="text-align:right">
+
+            </div>
+            <div class="col-xs-4">
+                <span id="msg-alert1"></span>
+            </div>
+        </div> -->
+
+
+    </fieldset>
+
+
+
+    <legend> </legend>
+    <div style="text-align:center">
+        <span><button type="submit" class="btn btn-success submitbut">Save</button>
+        </span><br />
+    </div>
+</form>
+{% endblock %}
+{% block footer %}
+{{ super() }}
+<script type="text/javascript">
+
+    $(function () {
+        $("#setting-form").validate({
+            rules: {
+                chassis_name: {
+                    required: true,
+                    maxlength: 10,
+                    nowhitespace: true
+                },
+                operation: {
+                    required: true,
+                    maxlength: 25
+                },
+                station: {
+                    required: true,
+                    maxlength: 25
+                },
+                slot: {
+                    required: true,
+                    digits: true,
+                    max: 100,
+                    min: 1
+                },
+                interval: {
+                    required: true,
+                    digits: true,
+                    max: 1000000,
+                    min: 1
+                }
+            },
+            messages: {
+                chassis_name: { required: "Please specify Chassis Name", maxlength: "Character not exceed than 10" },
+                operation: { required: "Please specify Operation Name", maxlength: "Character not exceed than 25" },
+                station: { required: "Please specify Station Name", maxlength: "Character not exceed than 25" },
+                slot: "Plase input only number in range 1 - 100",
+                interval: "Plase input only number in range 1 - 1,000,000 (seconds) ",
+            },
+            errorElement: "em",
+            errorPlacement: function (error, element) {
+                // Add the `help-block` class to the error element
+                error.addClass("help-block");
+
+                if (element.prop("type") === "checkbox") {
+                    error.insertAfter(element.parent("label"));
+                } else {
+                    error.insertAfter(element);
+                }
+            },
+            highlight: function (element, errorClass, validClass) {
+                $(element).parents(".col-xs-4").addClass("has-error");
+            },
+            unhighlight: function (element, errorClass, validClass) {
+                $(element).parents(".col-xs-4").removeClass("has-error");
+            }
+        });
+    });
+</script>
+{% endblock %}

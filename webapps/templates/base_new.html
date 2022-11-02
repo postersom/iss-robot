@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+
+<head>
+    {% block head %}
+    <meta charset="utf-8" />
+    <title>{% block title %}Robot Testing{% endblock %}</title>
+    <link href="Images/logo.ico" rel="ISS Icon" type="image/x-icon" />
+    <meta name="viewport" content="width=device-width" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <link href="{{ url_for('static', filename='css/bootstrap-4.3.1.min.css') }}" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='css/bootstrap-vue-2.0.0-rc.24.min.css') }}" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='css/theme_bs4.css') }}" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet" />
+
+
+
+</head>
+{% endblock %}
+
+<body>
+    <div id="app">
+        <div>
+            <b-navbar type="dark" variant="primary">
+                <div class="container-fluid">
+                    <b-navbar-brand href="/"> <img src="{{ url_for('static', filename='images/CL_LOGO_WHITE.png') }}">
+                    </b-navbar-brand>
+                    <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+                    <b-collapse id="nav-collapse" is-nav>
+                        <b-navbar-nav>
+
+                            <b-nav-item id="menu1" href="/"> Home
+
+                            </b-nav-item>
+                            <b-nav-item id="menu2" href="/log" class="btnlog "> Log Viewer
+
+                            </b-nav-item>
+                            <b-nav-item id="menu3" href="/setting">Setting
+                            </b-nav-item>
+                        </b-navbar-nav>
+
+                    </b-collapse>
+                </div>
+            </b-navbar>
+        </div>
+        <div id="content"></div>
+
+        <div class="container">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+</body>
+{% block footer %}
+<div class="text-center" style="color:#bbb;margin-bottom:10px;margin-top:50px;">
+    <p id="version"></p>
+</div>
+<div class="text-center">
+    <p> </p>
+    <p>© Copyright Celestica Inc. 2019. All rights reserved.</p>
+</div>
+</div>
+<!-- <script src="//polyfill.io/v3/polyfill.min.js?features=es2015%2CMutationObserver" crossorigin="anonymous"></script> -->
+<script src="{{ url_for('static', filename='js/socket.io-1.7.3.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/vue-2.6.10.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap-vue-2.0.0-rc.24.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/axios-0.19.0.min.js') }}"></script>
+
+<script type="text/javascript">
+
+</script>
+{% endblock %}
+
+</html>

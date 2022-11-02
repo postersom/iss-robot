@@ -1,0 +1,84 @@
+#!/bin/bash
+#
+# Startup script for the ISS3 Tomcat server
+# Nuttapong Kaewnoi <nkaewnoi@celestica.com>
+# Dec 18, 2020
+# description: Starts and stops the Tomcat daemon.
+# processname: tomcat
+# pidfile: /var/run/tomcat.pid
+
+
+# See how we were called.
+username=nuttapong
+timestamp=`date +"%Y%m%d%s"`
+
+KillProcess(){
+
+        process_id=`/bin/ps -fu $USER| grep "Documents/git/iss-robot/webapps/app.py" | grep -v "grep" | awk '{print $2}'`
+        if [ -z $process_id ]; then
+                echo -e "[4/2] Process ISS is Inactive    ... \e[32mDone\e[0m"
+        else
+                sudo kill -9 $process_id
+                if [ $? -eq 0 ]; then
+                        echo -e "[4/2] Kill Process ISS           ... \e[32mDone\e[0m"
+                else
+                        echo -e "[4/2] Fail to Kill Process ISS   ... \e[31mFail\e[0m"
+                fi
+                sleep 1s
+        fi
+        sleep 1s
+
+        process_id=`/bin/ps -fu $USER|grep robot |grep -v grep |awk '{print $2}'`
+        if [ -z $process_id ]; then
+                echo -e "[4/3] Process Robot is Inactive  ... \e[32mDone\e[0m"
+        else
+                sudo kill -9 $process_id
+                if [ $? -eq 0 ]; then
+                        echo -e "[4/3] Kill Process Robot         ... \e[32mDone\e[0m"
+                else
+                        echo -e "[4/3] Fail to Kill Process Robot ... \e[31mFail\e[0m"
+                fi
+                sleep 1s
+        fi
+        sleep 1s
+}
+
+MoveOldLogs(){
+        dir=/opt/Logs_ISS/logs.out
+        if [ -f $dir ]; then
+                mv /opt/Logs_ISS/logs.out /opt/Logs_ISS/$timestamp.out
+                echo -e "[4/1] Record Old logs ISS        ... \e[32mDone\e[0m"
+        else
+                echo -e "[4/1] Old logs ISS is not exist  ... \e[32mDone\e[0m"
+        fi
+        sleep 1s
+}
+
+case $1 in
+        start|restart)
+                MoveOldLogs
+                KillProcess
+                timestamp=`date +"%Y%m%d%s"`
+                su -l $username -c "source /home/$username/env/bin/activate ; python /home/$username/Documents/git/iss-robot/webapps/app.py >> /opt/Logs_ISS/logs.out 2>&1 &"
+                if [ $? -eq 0 ]; then
+                        sleep 1s
+                        if [ $1 == 'start' ]; then space="   "; else space=" "; fi
+                        echo -e "[4/4] ISS ${1^}               ${space}... \e[32mDone\e[0m"
+                else
+                        sleep 1s
+                        if [ $1 == 'start' ]; then space="   "; else space=" "; fi
+                        echo -e "[4/4] ISS ${1^}               ${space}... \e[31mFail\e[0m"
+                fi
+        ;;
+        stop)
+                MoveOldLogs
+                KillProcess
+                echo -e "[4/4] ISS ${1^}                   ... \e[32mDone\e[0m"
+        ;;
+        *)
+                echo -e "\e[93mUsage Command: iss [start|stop|restart]\e[0m"
+        ;;
+esac
+
+exit 0
+# tdeadmin@CTHHTC001:/etc/init.d$

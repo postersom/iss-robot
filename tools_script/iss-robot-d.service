@@ -1,0 +1,16 @@
+[Unit]
+Description=Python Virtualenv service
+After=multi-user.target
+
+[Service]
+#User=%u
+Type=simple
+Environment="VIRTUAL_ENV=%h/env" "BINDIR=%h/Documents/git/iss-robot/webapps"
+Environment=PATH=%h/env/bin:$PATH
+#ExecStart=python -v
+ExecStart=%h/env/bin/python %h/Documents/git/iss-robot/webapps/app.py
+#ExecStart=/bin/bash -c"echo $VIRTUAL_ENV"
+#ExecStart=/bin/bash -c"cd $BINDIR; source $VIRTUAL_ENV/bin/activate; $BINDIR/app.py"
+
+[Install]
+WantedBy=default.target

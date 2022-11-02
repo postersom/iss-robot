@@ -1,0 +1,259 @@
+{% extends "base.html" %}
+{% set active_page = "menu4" %}
+{% block title %}{{ block_title }}{% endblock %}
+{% block head %}
+{{ super() }}
+<style type="text/css">
+    .important {
+        color: #336699;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<h1>Play Box</h1><br />
+<!-- <div>Debug Mode</div> -->
+<form action="" method="post" onsubmit="" id="log-filter">
+    <div class="row">
+        <div class="col-md-2 form-group">
+            <label class="form-label">Code From :</label>
+            {% if playbox_verify | length > 0 %}
+            <input disabled id="code_from" name="code_from" type="text" class="form-control"
+                    value="{{ playbox_verify["code_from"] }}" />
+            {% else %}
+            <select id="code_from" name="code_from" class="form-control">
+                <option value="Production">Production</option>
+                <option value="Debug">Debug</option>
+            </select>
+            {% endif %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-row">
+            <div class="col-md-2 form-group" hidden>
+                <label class="form-label">Test Mode :</label>
+                <input id="test_mode" name="test_mode" type="text" class="form-control" value="Playbox" />
+            </div>
+            {% if playbox_verify | length > 0 %}
+            <input id="code_version" class="code_version hidden"
+                value="{{ playbox_verify["robot_path"] }}" />
+            <div class="col-md-2 form-group">
+                <label class="form-label">Operator ID :</label>
+                <input disabled id="operation_id_playbox" name="operation_id_playbox" type="text" class="form-control"
+                    value="{{ playbox_verify["operation_id"] }}" />
+            </div>
+            <div class="form-group col-md-1">
+            </div>
+            <div class="col-md-1 form-group">
+                <label class="form-label">Test Slot :</label>
+                <input disabled id="slot_location" name="slot_location" type="text" class="form-control option-param"
+                    value="{{ playbox_verify["slot_location"] }}" />
+            </div>
+            <div class="form-group col-md-1">
+            </div>
+            <div class="col-md-2 form-group">
+                <label class="form-label">UUT Serial Number :</label>
+                <input id="serial_number" name="serial_number" type="text" class="form-control"
+                    value="{{ playbox_verify["serial_number"] if playbox_verify }}" disabled />
+            </div>
+            <div class="form-group col-md-1">
+            </div>
+            <div class="col-md-2 form-group">
+                <label class="form-label">UUT Access Tag :</label>
+                <input id="param" name="param" type="text" class="form-control"
+                    value="{{ playbox_verify["param"] if playbox_verify }}" disabled />
+            </div>
+            <div class="form-group col-md-1">
+            </div>
+            <div class="col-md-1 form-group">
+                <label class="form-label">LOGOP :</label>
+                <input disabled id="logop" name="logop" type="text" class="form-control option-param"
+                    value="{{ playbox_verify["logop"] }}" />
+            </div>
+            {% else %}
+            <div class="col-md-2 form-group">
+                <label class="form-label">Operator ID :</label>
+                <input id="operation_id" name="operation_id" type="text" class="form-control" value="" />
+            </div>
+            <div class="form-group col-md-1">
+            </div>
+            <div class="col-md-1 form-group">
+                <label class="form-label">Test Slot :</label>
+                <select id="slot_location" name="slot_location" class="form-control">
+                    {% for slot in test_slot %}
+                    <option value="{{ test_slot[slot] }}">{{ test_slot[slot] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group col-md-1">
+            </div>
+            <div class="col-md-2 form-group">
+                <label class="form-label">UUT Serial Number :</label>
+                <input id="serial_number" name="serial_number" type="text" class="form-control" value="" />
+            </div>
+            <div class="form-group col-md-1">
+            </div>
+            <div class="col-md-2 form-group">
+                <label class="form-label">UUT Access Tag :</label>
+                <input id="param" name="param" type="text" class="form-control" value="" />
+            </div>
+            <div class="form-group col-md-1">
+            </div>
+            <div class="col-md-1 form-group">
+                <label class="form-label">LOGOP :</label>
+                <select id="logop" name="logop" class="form-control">
+                    {% for logop in logops %}
+                    <option value="{{ logop.name }}">{{ logop.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+    {% if error_message | length > 0 %}
+    <legend class="row text-center" style="font-size: 16px; font-weight:bolder; color:#EB2F46;"> {{ error_message }}
+    </legend>
+    {% endif %}
+    <div class="row text-right" style="margin-top:10px; ">
+        <a class="btn btn-default" href="/playbox" role="button">Reset Testcase
+        </a>
+        <button type="submit" class="btn btn-primary" onclick="" {{ "disabled" if playbox_verify|length > 0 }}>Verify
+            Testcase</button>
+    </div>
+</form>
+<div id="navigation_top" align="center"></div>
+<div class="panel panel-default">
+    <!-- Default panel contents -->
+    <table id="report" class="table table-striped table-bordered">
+        <thead>
+            <tr style="font-size:small">
+                <th>Test Case</th>
+                <th>PlayBox</th>
+            </tr>
+        </thead>
+        <tbody class="check-testcase" id="test">
+            {% if testcases | length > 0 %}
+            <tr>
+                <td class="text-left"> All </td>
+                <td class="rows text-center select-all">
+                    <input class="all-testcase" id="all-testcase" value="all-testcase" type="checkbox" checked />
+                </td>
+            </tr>
+            {% endif %}
+            {% for testcase in testcases %}
+            <tr>
+                <td class="text-left">{{ testcase }}</td>
+                <td class="rows text-center">
+                    <input class="testcase" id="testcase" value="{{ testcase }}" type="checkbox" checked />
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div id="navigation" class="text-center">
+</div>
+<div class="alert alert-success alert-dismissible text-center hide" id="status-respon" role="alert">
+</div>
+
+{% if testcases | length > 0 %}
+<div class="row text-right" style="margin-top:10px; ">
+    <button type="button" id="submitVerify" class="btn btn-default" onclick="window.location.reload();">Reset
+        Verify</button>
+    <button type="button" id="submitVerify" class="btn btn-primary" onclick="sendVerify_playbox()">Verify ODC</button>
+    <button type="button" id="submitScanin" class="btn btn-primary" onclick="sendPlayboxBatch()" data-dismiss="modal"
+        disabled="disabled">Submit</button>
+</div>
+{% endif %}
+
+<div class="modal fade" role="dialog" id="myModalLoading" aria-labelledby="gridSystemModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="gridSystemModalLabel">Loading</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-4">Please Wait</div>
+                    <!--<div class="col-md-4 col-md-offset-4">22</div>-->
+                </div>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+{% endblock %}
+{% block footer %}
+{{ super() }}
+<script type="text/javascript">
+
+    $(function () {
+        $("#log-filter").validate({
+            rules: {
+                serial_number: {
+                    required: true,
+                    maxlength: 20,
+                    nowhitespace: true
+                }
+            },
+            messages: {
+                serial_number: { required: "Please specify Serial Number", maxlength: "Character not exceed than 10" },
+            },
+            errorElement: "em",
+            errorPlacement: function (error, element) {
+                // Add the `help-block` class to the error element
+                error.addClass("help-block");
+
+                if (element.prop("type") === "checkbox") {
+                    error.insertAfter(element.parent("label"));
+                } else {
+                    error.insertAfter(element);
+                }
+            },
+            highlight: function (element, errorClass, validClass) {
+                $(element).parents(".col-xs-4").addClass("has-error");
+            },
+            unhighlight: function (element, errorClass, validClass) {
+                $(element).parents(".col-xs-4").removeClass("has-error");
+            }
+        });
+
+        $('.testcase').change(function () {
+            var select_all = true;
+            $.each($('.testcase'), function (key, value) {
+                if (!value.checked) {
+                    select_all = false;
+                }
+            });
+            console.log("select_all : " + select_all)
+            $('#all-testcase').prop('checked', select_all);
+        });
+
+        // select all checkbox in playbox popup event
+        $('#all-testcase').change(function () {
+            var select;
+            $.each($('#all-testcase'), function (key, value) {
+                if (!value.checked) {
+                    select = false;
+                }
+                else {
+                    select = true;
+                }
+            });
+            console.log("select : " + select)
+            $('.testcase').prop('checked', select);
+            $('#all-testcase').prop('checked', select);
+        });
+
+    });
+    var total_slot = {{ info['slot'] }};
+    var test_station = "{{ info['station'] }}";
+    var chassis_name = "{{ info['chassis_name'] }}";
+    var param_name = "{{ info["parameter"] }}";
+
+</script>
+{% endblock %}

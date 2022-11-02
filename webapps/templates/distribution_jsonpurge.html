@@ -1,0 +1,34 @@
+<form method="POST" id="add-setting-form">
+    <fieldset>
+        <legend></legend>
+        <div class="row" style="margin-bottom:10px">
+            <div class="col-xs-4" style="text-align:right">
+                <b> Release : </b>
+            </div>
+            <div class="col-xs-1" style="text-align:left;margin-top:4px">
+                <span id="symbol-msg"></span>
+                <span id="stname-msg"></span>
+            </div>
+            <div class="col-xs-3">
+                <input type="text" id="{{ release_purge }}" name="release_purge" value="{{ release_purge }}"
+                    style="width:200px;margin-left:10px" class="form-control" disabled="">
+            </div>
+        </div>
+
+    </fieldset>
+
+
+
+    <legend> </legend>
+   
+</form>
+
+<script type="text/javascript">
+    
+      // var data = document.getElementByName("release_purge").value = this.value;
+      var data = document.querySelector('input[name=release_purge]').value
+      console.log(data)
+      $("#purge").val(data);
+    
+
+</script>

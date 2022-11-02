@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% set active_page = "menu3" %}
+{% block title %}{{ block_title }}{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+{% block content %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for category, message in messages %}
+<div class="alert alert-{{ category }} alert-dismissible" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+            aria-hidden="true">&times;</span></button>
+    <!-- <strong>Title</strong> --> {{ message }}
+</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
+<h1>Add LOGOP</h1>
+<form action="" method="post" onsubmit="" id="add-setting-form">
+    <fieldset>
+        <legend></legend>
+
+
+        <div class="row" style="margin-bottom:10px">
+            <div class="col-xs-4" style="text-align:right">
+                <b> Name : </b>
+            </div>
+            <div class="col-xs-4">
+                <input type="text" id="name" name="name" value="{{ form_data['name']  if form_data}}"
+                    style="width:200px;margin-left:10px" class="form-control">
+            </div>
+            <div class="col-xs-4" style="margin-left:-90px;margin-top:4px">
+                <span id="symbol-msg"></span>
+                <span id="stname-msg"></span>
+            </div>
+        </div>
+
+        <div class="row" style="margin-bottom:10px">
+            <div class="col-xs-4" style="text-align:right">
+                <b>Order : </b>
+            </div>
+            <div class="col-xs-4">
+                <input type="text" id="order" name="order" value="{{ form_data['order']  if form_data}}"
+                    style="width:200px;margin-left:10px" class="form-control">
+            </div>
+            <div class="col-xs-4" style="margin-left:-90px;margin-top:4px">
+                <span id="symbol-msg"></span>
+                <span id="stname-msg"></span>
+            </div>
+        </div>
+    </fieldset>
+
+
+
+    <legend> </legend>
+    <div style="text-align:center">
+        <span><button type="submit" class="btn btn-success submitbut">Save</button>
+        </span><br />
+    </div>
+</form>
+
+{% endblock %}
+{% block footer %}
+{{ super() }}
+<script type="text/javascript">
+
+    $(function () {
+        $("#add-setting-form").validate({
+            rules: {
+                name: {
+                    required: true,
+                    maxlength: 100,
+                    nowhitespace: true
+                },
+                order: {
+                    required: true,
+                    digits: true,
+                    max: 100,
+                    min: 1
+                }
+            },
+            messages: {
+                name: { required: "Please specify Chassis Name", maxlength: "Character not exceed than 10" },
+                order: "Plase input only number in range 1 - 100",
+            },
+            errorElement: "em",
+            errorPlacement: function (error, element) {
+                // Add the `help-block` class to the error element
+                error.addClass("help-block");
+
+                if (element.prop("type") === "checkbox") {
+                    error.insertAfter(element.parent("label"));
+                } else {
+                    error.insertAfter(element);
+                }
+            },
+            highlight: function (element, errorClass, validClass) {
+                $(element).parents(".col-xs-4").addClass("has-error");
+            },
+            unhighlight: function (element, errorClass, validClass) {
+                $(element).parents(".col-xs-4").removeClass("has-error");
+            }
+        });
+    });
+</script>
+{% endblock %}

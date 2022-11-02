@@ -1,0 +1,216 @@
+{% extends "base.html" %}
+{% set active_page = "menu1" %}
+{% block title %}{{ block_title }}{% endblock %}
+{% block head %}
+{{ super() }}
+<style type="text/css">
+    .important {
+        color: #336699;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <h3>Station : {{ info['station'] }}</h3>
+    </div>
+    <div class="col-md-8">
+        <div class="pull-right h3vertical">
+
+            <button id="" href="#" class="btn btn-primary" data-toggle="" data-target="" data-id=""
+                onclick="openScanIn()">Scan-in
+                batch</button>
+            <button class="btn btn-primary" data-toggle="modal" data-target="#checkoutbatch" style="">Delivery
+                out</button>
+            <button class="btn btn-primary" data-toggle="modal" data-target="#abortbatch" style="">Abort</button>
+        </div>
+    </div>
+</div>
+<div class="row" id="teststatusdiv">
+    <div class="col-md-8 col-md-offset-2">
+        <p class="text-center">Testing <span class="lbstatus lbtesting" id="test-counter">0</span>Failing <span
+                class="lbstatus lbfailing" id="failing-counter">0</span>Failed <span class="lbstatus lbfailed"
+                id="failed-counter">0</span>Aborted <span class="lbstatus lbaborted" id="abort-counter">0</span>Passes
+            <span class="lbstatus lbpasses" id="pass-counter">0</span></p>
+    </div>
+
+
+</div>
+<div>
+    <div class="row" id="uutList">
+        {% for item in tests %}
+        <div class="col-sm-3 {{ item["test_info"]["status"]|lower if item|length > 0 else "default" }}"
+            id="slot-{{ loop.index }}">
+            {% if loop.index %4 == 0 %}
+            <div class="panel">
+                {% else %}
+                <div class="panel leftpanel">
+                    {% endif %}
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-sm-4" id="{{ info['chassis_name'] }}">
+                                <span class="chasisname"> <a style="font-size: 14px;"
+                                        href="{{ "status/"~ loop.index ~ "/" ~ info['chassis_name'] ~  loop.index if item|length > 0  else "#" }}"
+                                        onclick="showStatus({{ loop.index }})">
+                                        {{ info['chassis_name'] }}{{ loop.index }}
+                                    </a></span>
+
+                            </div>
+                            <div class="col-sm-4 text-center" style="font-size: 14px; font-weight:bolder;">
+                                {{ item["logop"] if item|length > 0  }}
+                            </div>
+                            <div class="col-sm-4 text-right">
+                                <p class="chasisstatus">{{ item["test_info"]["status"] if item|length > 0  }}</p>
+                                <p class="testtime">{{ item["test_info"]["elapsed_time"] if item|length > 0  }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div><span class="slot-sn"><b>{{ item["serial_number"]  if item|length > 0 }} </b></span>
+                            {% if item["user_interactions"] and not item["user_interactions"]['answer'] and item["test_info"]["status"] == "Testing" %}
+                            <span>
+                                <img src="{{ url_for('static', filename='images/strobe.gif') }}" width="20"
+                                    height="20"></span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        {% if  item|length > 0 and item["test_info"]["status"] != "passes" %}
+                        <div class="col-sm-6">
+                            <span class="slot-sn"> <a style="font-size: 14px; font-weight:bolder; color:#{{ item["test_info"]["color"] if item|length > 0 else "cccccc" }};"
+                                href="{{ "status/"~ loop.index ~ "/" ~ info['chassis_name'] ~  loop.index ~ "/view/" ~ item["test_info"]["test_case"] if item|length > 0  else "#" }}">
+                                {{ item["test_info"]["test_case"] if item["statuses"]|length > 0 }}
+                            </a></span>
+                        </div>
+                            {% else %}
+                        <div class="col-sm-6">
+                            <span class="slot-sn"><b>{{ item["statuses"][0]["message"] if item["statuses"]|length > 0 }}</b></span>
+                        </div>
+                                {% endif %}
+                        <div class="col-sm-6">
+                            <div class="col-md-10"><a class="comment" data-toggle="tooltip" data-placement="bottom"
+                                    title="TEST SCRIPT" href="" target="_blank"></a></div>
+                            {% if item["user_interactions"] and not item["user_interactions"]['answer'] and item["test_info"]["status"] == "Testing" %}
+                            <div class="col-md-2"><a id="popup-{{ loop.index }}" tabindex="0" role="button"
+                                    data-placement="bottom" href="./userinteraction/{{ loop.index }}"><span
+                                        class="glyphicon glyphicon-th-list" aria-hidden="true"></span></a></div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div><span class="slot-sn"><b>{{ item["test_mode"] if item|length > 0  }} </b></span></div>
+                        <div><span class="slot-sn"><b>{{ item["code_version"] if item["test_mode"] == "Production"  }}
+                                </b></span></div>
+                    </div>
+                </div>
+            </div>
+            {% if loop.index %4 == 0 %}
+            <div class="clearfix"> </div>
+            {% endif %}
+            {% endfor %}
+            {% for item in chambers %}
+            <div class="col-sm-3 {{ item["test_info"]["status"]|lower if item|length > 0 else "default" }}"
+                id="slot-{{ loop.index }}">
+                {% if loop.index %4 == 0 %}
+                <div class="panel">
+                    {% else %}
+                    <div class="panel leftpanel">
+                        {% endif %}
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-sm-4" id="chamber">
+                                    <span class="chasisname"> <a style="font-size: 14px;"
+                                            href="{{ "status/"~ item["location"] ~"/chamber" ~ item["location"] if item|length > 0  else "#" }}"
+                                            onclick="showStatus({{ item["location"] }})">
+                                            CHAMBER{{ loop.index + info['slot'] }}
+                                        </a></span>
+
+                                </div>
+                                <div class="col-sm-4 text-center" style="font-size: 14px; font-weight:bolder;">
+                                    {{ item["logop"] if item|length > 0  }}
+                                </div>
+                                <div class="col-sm-4 text-right">
+                                    <p class="chasisstatus">{{ item["test_info"]["status"] if item|length > 0  }}</p>
+                                    <p class="testtime">{{ item["test_info"]["elapsed_time"] if item|length > 0  }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <div><span class="slot-sn"><b>{{ item["serial_number"]  if item|length > 0 }} </b></span>
+                                {% if item["user_interactions"] and not item["user_interactions"]['answer'] and item["test_info"]["status"] == "Testing" %}
+                                <span>
+                                    <img src="{{ url_for('static', filename='images/strobe.gif') }}" width="20"
+                                        height="20"></span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            {% if  item|length > 0 and item["test_info"]["status"] != "passes" %}
+                            <div class="col-sm-6">
+                                <span class="slot-sn"> <a style="font-size: 14px; font-weight:bolder; color:#{{ item["test_info"]["color"] if item|length > 0 else "cccccc" }};"
+                                    href="{{ "status/"~ item["location"] ~"/chamber" ~ item["location"] ~ "/view/" ~ item["test_info"]["test_case"] if item|length > 0  else "#" }}">
+                                    {{ item["test_info"]["test_case"] if item["statuses"]|length > 0 }}
+                                </a></span>
+                            </div>
+                                {% else %}
+                            <div class="col-sm-6">
+                                <span class="slot-sn"><b>{{ item["statuses"][0]["message"] if item["statuses"]|length > 0 }}</b></span>
+                            </div>
+                                    {% endif %}
+                            <div class="col-sm-6">
+                                <div class="col-md-10"><a class="comment" data-toggle="tooltip" data-placement="bottom"
+                                        title="TEST SCRIPT" href="" target="_blank"></a></div>
+                                {% if item["user_interactions"] and not item["user_interactions"]['answer'] and item["test_info"]["status"] == "Testing" %}
+                                <div class="col-md-2"><a id="popup-{{ loop.index }}" tabindex="0" role="button"
+                                        data-placement="bottom" href="./userinteraction/{{ loop.index }}"><span
+                                            class="glyphicon glyphicon-th-list" aria-hidden="true"></span></a></div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <div><span class="slot-sn"><b>{{ item["test_mode"] if item|length > 0  }} </b></span></div>
+                            <div><span class="slot-sn"><b>{{ item["code_version"] if item["test_mode"] == "Production"  }}
+                                    </b></span></div>
+                        </div>
+                    </div>
+                </div>
+                {% if loop.index %4 == 0 %}
+                <div class="clearfix"> </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+
+        </div>
+    </div>
+    {% include 'modal.html' %}
+
+
+    {% endblock %}
+    {% block footer %}
+    {{ super() }}
+    {% if info["version"] | length > 0 %}
+    <p class="text-center">Version: {{ info['version'] }}</p>
+    {% endif %}
+    <script type="text/javascript">
+
+
+        window.setInterval('refresh()', {{ info['interval']}} * 1000); 	// Call a function every 10000 milliseconds (OR 10 seconds).
+
+        // Refresh or reload page.
+        function refresh() {
+            if (!($(".modal").is(':visible') || $(".popover").is(':visible'))) {
+
+                window.location.reload();
+
+            }
+        }
+
+        var total_slot = {{ info['slot'] }};
+        var test_station = "{{ info['station'] }}";
+        var chassis_name = "{{ info['chassis_name'] }}";
+        var param_name = "{{ info["parameter"] }}";
+        var model_test = "{{ info['model_test'] }}";
+
+    </script>
+
+    {% endblock %}

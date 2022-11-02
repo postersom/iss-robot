@@ -1,0 +1,231 @@
+{% extends "base.html" %}
+{% set active_page = "menu3" %}
+{% block title %}{{ block_title }}{% endblock %}
+{% block head %}
+{{ super() }}
+
+{% endblock %}
+{% block content %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for category, message in messages %}
+<div class="alert alert-{{ category }} alert-dismissible" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+            aria-hidden="true">&times;</span></button>
+    <!-- <strong>Title</strong> --> {{ message }}
+</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
+ 
+<h1>Distribution Server</h1>
+<img src="/static/images/tenor.gif" id="gif" style="display: none; margin: 0 auto; width: 300px; height: 300px; visibility: hidden;">
+<form method="POST" enctype="multipart/form-data" action="" id="upload_submit">
+
+        <div class="row" style="margin-bottom:10px">
+            <div class="col-xs-10" style="text-align:center">
+                <h3> Resource Server </h3>
+            </div>
+        </div>
+
+        <fieldset>
+            <legend></legend>
+            <div class="col-xs-10" style="text-align:center">
+                <h4> Get Firmware Config </h4>
+            </div>
+            <div class="row" style="margin-bottom:10px">
+
+            <div class="row" style="margin-bottom:10px">
+            <div class="col-xs-4" style="text-align:right">
+                <b> Product : </b>
+            </div>
+            <div class="col-xs-1" style="text-align:left;margin-top:4px">
+                <span id="symbol-msg"></span>
+                <span id="stname-msg"></span>
+            </div>
+            <div class="col-xs-3">
+                <select class="form-control" id="datagroup" name="datagroup">
+                    <option value="">Please select</option>
+                    {% for i in range(0, len3) %}
+                        <option value="{{ datagroup[i] }}" >{{ datagroup[i] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            </div>
+
+            <div id="place_for_group"></div>
+            
+            <div id="place_for_suggestions"></div>
+            <div style="text-align:center">
+                <!-- <input type="button" id="getFile" value="Get File" class="btn btn-success" onclick="getFile();"/> -->
+                <button id="getFile" class="btn btn-primary" disabled="">Get File</button>
+                <span><a class="btn btn-warning btnCancal" id="btnCancal" href="/distribution/home/" role="button">Back</a>
+            </div>
+
+        </fieldset>
+        <legend></legend>
+
+            <div id="place_for_submit"></div>
+
+            <div style="display: none;">
+                
+                <!-- <input name="group" id="group" type="hidden"><br>
+                <input name="repo_select" id="repo_select" type="hidden"><br> -->
+                <input name="images_data" id="images_data" type="hidden"><br>
+                <input name="cpld" id="cpld" type="hidden"><br>
+                <input name="group" id="group" type="hidden"><br>
+                <input name="repo_select" id="repo_select" type="hidden"><br>
+                <input name="tag" id="tag" type="hidden"><br>
+
+            </div>
+        </div>
+
+        
+
+        <!-- <div id="place_for_group"></div>
+        <div id="place_for_suggestions"></div> -->
+
+    <!-- <div style="text-align:center">
+        <span><button type="submit" id="btnSubmit" class="btn btn-success submitbut">Submit</button>
+        <span><a class="btn btn-success btnCancal" id="btnCancal" href="/distribution/home/" role="button">Cancle</a>
+        <span><a class="btn btn-success btnReset" id="btnReset" href="" role="button">Reset Value</a>
+        </span><br />
+    </div> -->
+   
+</form>
+
+{% endblock %}
+{% block footer %}
+{{ super() }}
+<script type="text/javascript">
+    // function getFile() {
+    //     console.log("tesgfgst");
+    //     // document.getElementById("getFile").disabled = true;
+
+    //     var data_arr = []
+    //     var tag = document.querySelector('input[name=tag]').value
+    //     console.log(tag)
+    //     data_arr.push(tag);
+    //     var repo = document.querySelector('input[name=repo_select]').value
+    //     console.log(repo)
+    //     data_arr.push(repo);
+
+
+    //     console.log("data"+data)
+    //     var data = data_arr.toString();
+
+
+    //     $.ajax({
+    //       url: "/get_resource_path",
+    //       type: "get",
+    //       data: {proglang: data},
+    //       // data2: {proglang: repo},
+    //       success: function(response) {
+    //         $("#place_for_submit").html(response);
+    //         console.log(response)
+    //       },
+    //       error: function(xhr) {
+    //         //Do Something to handle error
+    //       }
+    //     });
+    // }
+    // $('#upload_submit').submit(function() {
+    //     $('#gif').css('visibility', 'visible');
+    //     document.getElementById("gif").style.display = 'block';
+    //     document.getElementById("btnSubmit").disabled = true;
+    //     // document.getElementsByClassName("btnCancal").disabled = true;
+    //     $("span > a").attr("disabled", "disabled");
+    //     document.getElementById("datagroup").disabled = true;
+    //     document.getElementById("repo").disabled = true;
+    //     document.getElementById("tag_list").disabled = true;
+    // });
+
+
+    // $('#package_list').on('change', function() {
+    //   console.log(this.value);
+    //   document.getElementById("btnSubmit").disabled = true;
+    //   var data = document.getElementById("group").value = this.value;
+
+    //       $.ajax({
+    //           url: "/get_path_upload",
+    //           type: "get",
+    //           data: {proglang: data},
+    //           success: function(response) {
+    //             $("#place_for_group").html(response);
+    //             console.log(response)
+    //           },
+    //           error: function(xhr) {
+    //             //Do Something to handle error
+    //           }
+    //         });
+
+    //     });
+
+    // $('#package_list').on('change', function() {
+    //   console.log(this.value);
+    //   $(this).next('input').focus().val(this.value);
+
+    //   });
+
+    $(document).ready(function() {        
+
+        $('#datagroup').on('change', function() {
+          console.log(this.value);
+
+          var data = document.getElementById("group").value = this.value;
+
+              $.ajax({
+                  url: "/get_resource_group",
+                  type: "get",
+                  data: {proglang: data},
+                  success: function(response) {
+                    $("#place_for_group").html(response);
+                    console.log(response)
+                  },
+                  error: function(xhr) {
+                    //Do Something to handle error
+                  }
+                });
+
+            });
+
+        $("#getFile").click(function(){
+            console.log("tesgfgst");
+            document.getElementById("getFile").disabled = true;
+            document.getElementById("btnCancal").disabled = true;
+
+            var data_arr = []
+            var tag = document.querySelector('input[name=tag]').value
+            console.log(tag)
+            data_arr.push(tag);
+            var repo = document.querySelector('input[name=repo_select]').value
+            console.log(repo)
+            data_arr.push(repo);
+
+
+            
+            var data = data_arr.toString();
+            console.log("data"+data)
+
+
+            $.ajax({
+              url: "/get_resource_path",
+              type: "get",
+              data: {proglang: data},
+              // data2: {proglang: repo},
+              success: function(response) {
+                $("#place_for_submit").html(response);
+                console.log(response)
+              },
+              error: function(xhr) {
+                //Do Something to handle error
+              }
+            });
+        });
+
+
+    });
+
+
+</script>
+{% endblock %}

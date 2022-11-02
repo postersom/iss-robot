@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% set active_page = "menu3" %}
+{% block title %}Add Setting{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+{% block content %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for category, message in messages %}
+<div class="alert alert-{{ category }} alert-dismissible" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+            aria-hidden="true">&times;</span></button>
+    <!-- <strong>Title</strong> --> {{ message }}
+</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
+<h1>Distribution Server</h1>
+<form target="_blank" action = "http://192.168.10.172:5000/api/upload" method="POST" enctype="multipart/form-data">
+    <fieldset>
+        <div class="row" style="margin-bottom:10px">
+            <div class="col-xs-4" style="text-align:right">
+                <b> Upload File: </b>
+            </div>
+            <div class="col-xs-1" style="text-align:left;margin-top:4px">
+                <span id="symbol-msg"></span>
+                <span id="stname-msg"></span>
+            </div>
+            <div class="col-xs-3">
+                <input type = "file" name = "data" />
+            </div>
+        </div>
+
+        <div class="row" style="margin-bottom:10px">
+            <div class="col-xs-4" style="text-align:right">
+                <b> Path Upload : </b>
+            </div>
+            <div class="col-xs-1" style="text-align:left;margin-top:4px">
+                <span id="symbol-msg"></span>
+                <span id="stname-msg"></span>
+            </div>
+            <div class="col-xs-3">
+                <!-- <input type="text" id="path" name="" value="../Package/Products/{{product}}/{{rev}}/"
+                    style="width:400px;" class="form-control" disabled=""> -->
+                <!-- <span><p id="path" name="path">tset/test</p></span> -->
+            </div>
+        </div> 
+
+        <div class="row" style="margin-bottom:10px">
+            <div class="col-xs-4" style="text-align:right">
+                <b> Custom Folder: </b>
+            </div>
+            <div class="col-xs-1" style="text-align:left;margin-top:4px">
+                <span id="symbol-msg"></span>
+                <span id="stname-msg"></span>
+            </div>
+            <div class="col-xs-3">
+                <input type = "text" name = "path" style="width:200px;margin-left:10px" class="form-control" value="W400/Images/CPLD/FCM" />
+            </div>
+            <div class="col-xs-3">
+                <button type="submit" id="createFolder" class="btn btn-success">Create Folder</button>
+            </div>
+        </div>
+
+    </fieldset>
+
+    <div style="text-align:center">
+      <span><button type="submit" id="btnSubmit" class="btn btn-success submitbut">Submit</button>
+        <span><a class="btn btn-success btnCancal" id="btnCancal" href="/distribution/home/" role="button">Cancle</a>
+        <span><a class="btn btn-success btnReset" id="btnReset" href="" role="button">Reset Value</a>
+        </span><br />
+
+    </div>
+
+    {% if show_predictions_modal %}
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+         <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+           <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+           </div>
+           <div class="modal-body">
+            ...
+           </div>
+           <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+           </div>
+          </div>
+         </div>
+        </div>
+    {% endif %}
+   
+</form>
+
+{% endblock %}
+{% block footer %}
+{{ super() }}
+<script type="text/javascript">
+   
+</script>
+{% endblock %}

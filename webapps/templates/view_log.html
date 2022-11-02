@@ -1,0 +1,284 @@
+{% extends "base.html" %}
+{% set active_page = "menu1" %}
+{% set content = "fluid" %}
+{% block title %}{{ block_title }}{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+{% block content %}
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    /* Create two equal columns that floats next to each other */
+    .column {
+        float: left;
+        width: 50%;
+        padding: 10px;
+        /* height: 300px; */
+        /* Should be removed. Only for demonstration */
+    }
+
+    /* Clear floats after the columns */
+    .row:after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+
+    .scrollbar{
+	    /* margin-left: 30px; */
+	    float: left;
+	    height: 600px;
+	    width: 50%;
+	    /* background: #F5F5F5; */
+	    overflow-y: scroll;
+	    margin-bottom: 25px;
+    }
+
+    .scrollbar2{
+	    /* margin-left: 30px; */
+	    float: left;
+	    height: 600px;
+	    width: 100%;
+	    /* background: #F5F5F5; */
+	    overflow-y: scroll;
+	    margin-bottom: 25px;
+    }
+
+</style>
+<div class="row">
+    <div class="col-md-1 text-center"><a href=".."><img src="{{ url_for('static', filename='images/ic-back.png') }}"
+        style="width:50px;height:50px;"></a></div>
+    <h4 class="col-md-2 form-group">
+        <button type="button" class="btn btn-primary" id="sequence_logs" onclick="show_sl()" value="true">Sequence
+            logs</button>
+    </h4>
+    <h4 class="col-md-2 form-group">
+        <button type="button" class="btn btn-outline-primary" id="raw_logs" onclick="show_rl()" value="false">Raw logs</button>
+    </h4>
+</div>
+<div class="row">
+    <div class="col-md-1 text-center"></a></div>
+    <h4 class="col-md-2 form-group">
+        <button type="button" class="btn btn-outline-primary" id="sequence_logs" onclick="download{{ filename + '.txt',sequence_logs }}" value="true">Download</button>
+    </h4>
+    <h4 class="col-md-2 form-group">
+        <button type="button" class="btn btn-outline-primary" id="raw_logs" onclick="download{{ filename + '.raw',raw_logs }}" value="false">Download</button>
+    </h4>
+</div>
+<div class="row">
+    <div class="alert alert-default" role="alert">
+        <h4 class="alert-heading">Testcase: {{ filename }}</h4>
+        <pre class="scrollbar2 only_sequence hide" style="white-space: pre-line; line-height: 1;">  
+            {% for line in sequence_logs %}
+            <span>{{ line }}</span>
+            {% endfor %}
+        </pre>
+        <pre class="scrollbar2 only_raw hide" style="white-space: pre-line; line-height: 1;">
+            {% for line in raw_logs %}
+            <span>{{ line }}</span>
+            {% endfor %}
+        </pre>
+        <pre class="scrollbar hide both" style="white-space: pre-line; line-height: 1; background-color:#f5f5f5;"">
+            <div class="force-overflow">
+                {% for line in sequence_logs %}
+                <span>{{ line }}</span>
+                {% endfor %}
+            </div>
+        </pre>
+        <pre class="scrollbar hide both" style="white-space: pre-line; line-height: 1; background-color:#e8e8e8;"">
+            <div class="force-overflow">
+                {% for line in raw_logs %}
+                <span>{{ line }}</span>
+                {% endfor %}
+            </div>
+        </pre>
+    </div>
+</div>
+
+
+{% endblock %}
+{% block footer %}
+{{ super() }}
+
+<script type="text/javascript">
+
+    $(function () {
+        var both = getCookie("show_logs");
+        console.log(both)
+
+        switch(both) {
+            case "set_both":
+                set_both();
+                break;
+            case "set_only_sequence":
+                set_only_sequence();
+                break;
+            case "set_only_raw":
+                set_only_raw();
+                break;
+            case "set_no_more":
+                set_no_more();
+                break;
+            default:
+                set_only_sequence();
+}
+        
+    });
+
+    function download(filename, text) {
+        var fulltext = "";
+        var i;
+        for (i = 0; i < text.length; i++) {
+            fulltext += text[i];
+            fulltext += "\n";
+        }
+
+        var element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(fulltext));
+        element.setAttribute('download', filename);
+
+        element.style.display = 'none';
+        document.body.appendChild(element);
+
+        element.click();
+
+        document.body.removeChild(element);
+    }
+
+    // Start file download.
+    // download("hello.txt","This is the content of my file :)");
+
+
+    //show both logs
+    function set_both() {
+        console.log("Both")
+        $('.both').removeClass('hide');
+        $('.only_sequence').addClass('hide');
+        $('.only_raw').addClass('hide');
+        setCookie("both", "hide", 365);
+        setCookie("only_sequence", "", 365);
+        setCookie("only_raw", "", 365);
+
+        $('#sequence_logs').val('true');
+        $('#sequence_logs').removeClass('btn-outline-primary');
+        $('#sequence_logs').addClass('btn-primary');
+
+        $('#raw_logs').val('true');
+        $('#raw_logs').removeClass('btn-outline-primary');
+        $('#raw_logs').addClass('btn-primary');
+
+        setCookie("show_logs", "set_both", 365);
+    }
+    
+    //show only sequence logs
+    function set_only_sequence() {
+        console.log("Only sequence")
+        $('.both').addClass('hide');
+        $('.only_sequence').removeClass('hide');
+        $('.only_raw').addClass('hide');
+
+        $('#sequence_logs').val('true');
+        $('#sequence_logs').removeClass('btn-outline-primary');
+        $('#sequence_logs').addClass('btn-primary');
+
+        $('#raw_logs').val('false');
+        $('#raw_logs').removeClass('btn-primary');
+        $('#raw_logs').addClass('btn-outline-primary');
+
+        setCookie("show_logs", "set_only_sequence", 365);
+    }
+
+    //show only raw logs
+    function set_only_raw() {
+        console.log("Only raw")
+        $('.both').addClass('hide');
+        $('.only_sequence').addClass('hide');
+        $('.only_raw').removeClass('hide');
+
+        $('#sequence_logs').val('false');
+        $('#sequence_logs').removeClass('btn-primary');
+        $('#sequence_logs').addClass('btn-outline-primary');
+
+        $('#raw_logs').val('true');
+        $('#raw_logs').removeClass('btn-outline-primary');
+        $('#raw_logs').addClass('btn-primary');
+
+        setCookie("show_logs", "set_only_raw", 365); 
+    }
+
+    //do not show the lgos
+    function set_no_more() {
+        console.log("No more")
+        $('.both').addClass('hide');
+        $('.only_sequence').addClass('hide');
+        $('.only_raw').addClass('hide');
+
+        $('#sequence_logs').val('false');
+        $('#sequence_logs').removeClass('btn-primary');
+        $('#sequence_logs').addClass('btn-outline-primary');
+
+        $('#raw_logs').val('false');
+        $('#raw_logs').removeClass('btn-primary');
+        $('#raw_logs').addClass('btn-outline-primary');
+
+        setCookie("show_logs", "set_no_more", 365);
+    }
+
+    function show_sl() {
+        $.each($('#sequence_logs'), function (key, value) {
+            if (value.value == "true") {
+                $.each($('#raw_logs'), function (key, value) {
+                    if (value.value != "true") {
+                        set_no_more();
+                    }
+                    else {
+                        set_only_raw();
+                    }
+                });
+                
+            }
+            else {
+                $.each($('#raw_logs'), function (key, value) {
+                    if (value.value != "true") {
+                        set_only_sequence();
+                    }
+                    else {
+                        set_both();
+                    }
+                });
+            }
+        });
+    }
+
+    function show_rl() {
+        $.each($('#raw_logs'), function (key, value) {
+            if (value.value == "true") {
+                $.each($('#sequence_logs'), function (key, value) {
+                    if (value.value != "true") {
+                        set_no_more();
+                    }
+                    else {
+                        set_only_sequence();
+                    }
+                });
+            }
+            else {
+                $.each($('#sequence_logs'), function (key, value) {
+                    if (value.value != "true") {
+                        set_only_raw();
+                    }
+                    else {
+                        set_both();
+                    }
+                });
+            }
+        });
+    }
+
+</script>
+{% endblock %}
