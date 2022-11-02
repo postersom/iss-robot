@@ -22,7 +22,9 @@ import os
 from dotenv import load_dotenv
 
 from model.swagger.testing import Testing
-from robot.parsing.model import TestData
+# from robot.parsing.model import TestData
+from robot.api import TestSuite
+from robot.api.parsing import get_model
 
 import gitlab
 import socket
@@ -634,9 +636,14 @@ def view_status(slot_no=None, slot=None):
 
     num_list = len(testcaselist)
     if num_list <= 0:
-        suite = TestData(parent=None, source=path_to_test_suite)
-        num_list = len(suite.testcase_table)
-        for testcase in suite.testcase_table:
+        # suite = TestData(parent=None, source=path_to_test_suite)
+        # num_list = len(suite.testcase_table)
+        # for testcase in suite.testcase_table:
+        #     testcaselist.append(testcase.name)
+
+        suites = TestSuite.from_model(get_model(path_to_test_suite))
+        num_list = len(suites.tests)
+        for testcase in suites.tests:
             testcaselist.append(testcase.name)
 
     settings_info = dict()
@@ -3122,7 +3129,7 @@ def download(filename):
     else:
         abort(404)
     directory = join(path, date_folder)
-    return send_from_directory(directory=directory, path=path, filename=filename)
+    return send_from_directory(directory=directory, path=filename)
 
 
 @app.route('/log/<string:filename>/')
