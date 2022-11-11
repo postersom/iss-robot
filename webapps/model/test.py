@@ -58,4 +58,4 @@ class Test(Base):
         insp = inspect(self)
         attr_state = insp.attrs.statuses
         print(attr_state.value)
-        return("completed")
+        return "completed"

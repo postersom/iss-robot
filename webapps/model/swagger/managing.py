@@ -7,6 +7,7 @@ from service.logging import Logging
 import sys
 import time
 
+
 class Managing(Model):
 
     def __init__(self):
@@ -35,18 +36,23 @@ class Managing(Model):
     @property
     def return_data(self) -> dict:
         return self._return_data
+
     @property
     def return_sync_point(self) -> dict:
         return self._return_sync_point
+
     @property
     def return_queue(self) -> dict:
         return self._return_queue
+
     @property
     def sn_sync(self) -> dict:
         return self._sn_sync
+
     @property
     def all_sn_scaning(self) -> dict:
         return self._all_sn_scaning
+
     @property
     def print_log(self) -> Logging:
         return self._print_log
@@ -89,7 +95,8 @@ class Managing(Model):
 
         self.sn_sync[tmp_batch_id]["error"] = True
         try:
-            all_sn = self.all_sn_scaning.get(tmp_batch_id).get("sns") if self.all_sn_scaning.get(tmp_batch_id).get("sns") else []
+            all_sn = self.all_sn_scaning.get(tmp_batch_id).get("sns") if self.all_sn_scaning.get(tmp_batch_id).get(
+                "sns") else []
             sync_sn = self.sn_sync[tmp_batch_id].get("sn")
             # Not found sn on this chassis_sn
             if not all_sn or len(all_sn) == 0:
@@ -139,9 +146,9 @@ class Managing(Model):
 
                 if check_sync:
                     # Robot framework need to setup something before run next step
-                    if request_body.get("setup") and not self.sn_sync.get(tmp_batch_id).get("setup"): 
+                    if request_body.get("setup") and not self.sn_sync.get(tmp_batch_id).get("setup"):
                         self.setup_after_sync_point(tmp_batch_id)
-                    else:    
+                    else:
                         # Sync-point have complete
                         self.sn_sync[tmp_batch_id]["error"] = False
                         message = "Sync-point is complete of chassis: {}".format(tmp_batch_id)
@@ -149,9 +156,10 @@ class Managing(Model):
                 # This SN and chassis-sn are not matched any condition
                 message = "This serial-number({}) and chassis-number({}) are not match any case"
         except Exception as E:
-            message = "Error on preparing to check serial number or add this serial number for sync-point: {}\nOn line: {}".format(E, sys.exc_info()[-1].tb_lineno)
+            message = "Error on preparing to check serial number or add this serial number for sync-point: {}\nOn line: {}".format(
+                E, sys.exc_info()[-1].tb_lineno)
         self.print_log.error(self.log_header, message)
-        #self.return_sync_point.update({"data": message})
+        # self.return_sync_point.update({"data": message})
         self.sn_sync[tmp_batch_id]["data"] = message
         self.print_log.info(
             "Managing.Model", "SN scan-in and SN sync-point:\n{} {}".format(self.all_sn_scaning, self.sn_sync))
@@ -164,7 +172,7 @@ class Managing(Model):
         sync_sn = None
         all_sn = None
         message = None
-        check_sync = None 
+        check_sync = None
         return
 
     def remove_sn_from_syncpoint(self, request_body) -> bool:
@@ -176,8 +184,11 @@ class Managing(Model):
             tmp_batch_id = None
             tmp_sn = None
             self.print_log.error(
-                self.log_header, "Cannot get slot-location or serial-number for remove serial number out from sync-poing stack")
-            self.sn_sync.get(tmp_batch_id).update({"data": "Cannot get slot-location or serial-number for remove serial number out from sync-poing stack", "error": True})
+                self.log_header,
+                "Cannot get slot-location or serial-number for remove serial number out from sync-poing stack")
+            self.sn_sync.get(tmp_batch_id).update(
+                {"data": "Cannot get slot-location or serial-number for remove serial number out from sync-poing stack",
+                 "error": True})
             return
 
         tmp_sn_count = self.all_sn_scaning.get(tmp_batch_id).get("sn_count")
@@ -185,12 +196,17 @@ class Managing(Model):
         if not tmp_csn_sn:
             self.print_log.error(
                 self.log_header, "Cannot get chassis from testing stack please check your chassis")
-            self.sn_sync.get(tmp_batch_id).update({"data": "Cannot get chassis from testing stack please check your chassis", "error": True})
+            self.sn_sync.get(tmp_batch_id).update(
+                {"data": "Cannot get chassis from testing stack please check your chassis", "error": True})
             return
         if not tmp_sn in tmp_csn_sn:
             self.print_log.error(
-                self.log_header, "Cannot get serial-number({}) from batch id ({}) please check your chassis".format(tmp_sn, tmp_batch_id))
-            self.sn_sync.get(tmp_batch_id).update({"data": "Cannot get serial-number({}) from batch id ({}) please check your chassis".format(tmp_sn, tmp_batch_id), "error": True})
+                self.log_header,
+                "Cannot get serial-number({}) from batch id ({}) please check your chassis".format(tmp_sn,
+                                                                                                   tmp_batch_id))
+            self.sn_sync.get(tmp_batch_id).update({
+                                                      "data": "Cannot get serial-number({}) from batch id ({}) please check your chassis".format(
+                                                          tmp_sn, tmp_batch_id), "error": True})
             return
 
         try:
@@ -200,25 +216,27 @@ class Managing(Model):
             message = "Remove serial-number on the sync-point is complete"
             self.sn_sync.get(tmp_batch_id).update({"data": message, "error": False})
         except Exception as e:
-            self.sn_sync.get(tmp_batch_id).update({"error": True, "data": "Error on remove serial-number cannot found {} or this serial-number never scan-in".format(tmp_sn)})
-        
+            self.sn_sync.get(tmp_batch_id).update({"error": True,
+                                                   "data": "Error on remove serial-number cannot found {} or this serial-number never scan-in".format(
+                                                       tmp_sn)})
+
         if tmp_sn in self.sn_sync.get(tmp_batch_id).get("sn"):
             self.sn_sync.get(tmp_batch_id).remove(tmp_sn)
-        
+
         return
-        
-    def setup_after_sync_point(self,tmp_batch_id):
+
+    def setup_after_sync_point(self, tmp_batch_id):
         try:
             # with open("", "r") as content:
-                # read file and assign to local variable
+            # read file and assign to local variable
             # setup testing with value from local variable 
             tmp_message = "Setup after all serial-number are synced complete"
             tmp_setup = True
-        except Exception as e: 
+        except Exception as e:
             tmp_message = "Cannot setup after all serial-number are synced: {}".format(
                 e)
             tmp_setup = False
-        tmp = { 
+        tmp = {
             "error": tmp_message,
             "setup": tmp_setup
         }
@@ -240,7 +258,7 @@ class Managing(Model):
             if self.sn_sync.get(tmp_batch_id).get("setup"):
                 self.print_log.info(self.log_header, "Setup is True")
                 return True
-                
+
             # if request_body.get("serial_number") == self.sn_sync.get(tmp_batch_id).get("sn")[0]:
             #     self.print_log.info(self.log_header, "First Sync")
             #     if self.sn_sync.get(tmp_batch_id).get("setup") is None:
@@ -259,7 +277,7 @@ class Managing(Model):
             try:
                 tmp_sn = request_body.get("serial_number")
                 if tmp_sn in self.sn_sync.get(tmp_batch_id).get("sn"):
-                    self.sn_sync.get(tmp_batch_id).get("sn").remove(tmp_sn)  
+                    self.sn_sync.get(tmp_batch_id).get("sn").remove(tmp_sn)
 
                 if len(self.sn_sync.get(tmp_batch_id).get("sn")) == 0:
                     self.sn_sync.pop(tmp_batch_id)
@@ -280,7 +298,7 @@ class Managing(Model):
         tmp_datetime_now = datetime.now()
         tmp_sn_count = self.all_sn_scaning.get(tmp_batch_id).get("sn_count")
         try:
-            if len(tmp_sn_sync) < tmp_sn_count: 
+            if len(tmp_sn_sync) < tmp_sn_count:
                 if tmp_checked_time is not None:
                     if (tmp_datetime_now - tmp_checked_time).seconds >= tmp_timeout:
                         self.print_log.info(self.log_header, "Found sn timeout before entry to sync-point")
@@ -296,7 +314,7 @@ class Managing(Model):
         return
 
     def remove_sn_sync_not_allow_timeout(self, request_body):
-        
+
         tmp_batch_id = request_body.get("batch_id")
         if not self.sn_sync.get(tmp_batch_id):
             return False
@@ -310,7 +328,7 @@ class Managing(Model):
             self.sn_sync.pop(tmp_batch_id)
             return True
         return False
-    
+
     def queue_access_hardware(self, queue):
         tmp_sn = queue.get("serial_number")
         tmp_remove_all = self._queue_stack.copy()
@@ -320,23 +338,25 @@ class Managing(Model):
         if not tmp_hardware_name:
             self.return_queue["data"] = "Not found hardware name please try again"
             return
-        
+
         print(self.log_header, self._hardware_working_with)
         # Check timeout queue
         if self._hardware_working_with and self._hardware_working_with.get(tmp_hardware_name):
-            if self._hardware_working_with.get(tmp_hardware_name).get("entry_time") and self._hardware_working_with.get(tmp_hardware_name).get("timeout"):
+            if self._hardware_working_with.get(tmp_hardware_name).get("entry_time") and self._hardware_working_with.get(
+                    tmp_hardware_name).get("timeout"):
                 tmp_entry_time = self._hardware_working_with.get(tmp_hardware_name).get("entry_time")
                 tmp_timeout = self._hardware_working_with.get(tmp_hardware_name).get("timeout")
                 if (datetime.now() - tmp_entry_time).seconds > tmp_timeout:
                     self._hardware_working_with.pop(tmp_hardware_name)
-        
+
         # Request from robot is release queue after access hardware complete
         if queue.get("type") == "release":
             if not self._hardware_working_with.get(tmp_hardware_name) and not self._queue_stack.get(tmp_hardware_name):
                 self.return_queue["data"] = "Not found {} is accessed from any test".format(tmp_hardware_name)
                 return
 
-            tmp_hw_working = self._hardware_working_with.get(tmp_hardware_name) if self._hardware_working_with.get(tmp_hardware_name) else {}
+            tmp_hw_working = self._hardware_working_with.get(tmp_hardware_name) if self._hardware_working_with.get(
+                tmp_hardware_name) else {}
             if tmp_hw_working:
                 if tmp_sn == tmp_hw_working.get("sn"):
                     self.return_queue["data"] = "Release {} out of using hardware({}) can access\
@@ -348,8 +368,9 @@ class Managing(Model):
                     self.return_queue["data"] = message
                 self.print_log.info(self.log_header, message)
                 return
-            
-            tmp_queue_stack = self._queue_stack.get(tmp_hardware_name) if self._queue_stack.get(tmp_hardware_name) else []
+
+            tmp_queue_stack = self._queue_stack.get(tmp_hardware_name) if self._queue_stack.get(
+                tmp_hardware_name) else []
             if not tmp_queue_stack:
                 message = "Queue is empty cannot release now."
             elif tmp_sn in tmp_queue_stack:
@@ -370,8 +391,9 @@ class Managing(Model):
             return
 
         tmp_queue_stack = self._queue_stack.get(tmp_hardware_name) if self._queue_stack.get(tmp_hardware_name) else []
-        tmp_hw_working = self._hardware_working_with.get(tmp_hardware_name).get("sn") if self._hardware_working_with.get(tmp_hardware_name) else ""
-        if tmp_hw_working:# Hardware is busy
+        tmp_hw_working = self._hardware_working_with.get(tmp_hardware_name).get(
+            "sn") if self._hardware_working_with.get(tmp_hardware_name) else ""
+        if tmp_hw_working:  # Hardware is busy
             if not tmp_sn in tmp_queue_stack and not tmp_sn == tmp_hw_working:
                 message = "Hardware is working with other unit now this serial number is added to queue please try again"
                 if not self._queue_stack.get(tmp_hardware_name):
@@ -383,7 +405,7 @@ class Managing(Model):
             else:
                 message = "This serial number({}) is access hardware({}) now".format(tmp_sn, tmp_hardware_name)
                 self.return_queue["error"] = False
-        else:# Hardware is free.
+        else:  # Hardware is free.
             if len(tmp_queue_stack) == 0:
                 self._hardware_working_with[tmp_hardware_name] = {
                     "sn": tmp_sn,
@@ -391,7 +413,8 @@ class Managing(Model):
                     "timeout": int(queue.get("timeout"))
                 }
                 self.return_queue["error"] = False
-                message = "Hardware is not working, This serial number({}) is using {} now".format(tmp_sn, tmp_hardware_name)
+                message = "Hardware is not working, This serial number({}) is using {} now".format(tmp_sn,
+                                                                                                   tmp_hardware_name)
             elif tmp_sn in tmp_queue_stack:
                 if tmp_queue_stack.index(tmp_sn) == 0:
                     self._hardware_working_with[tmp_hardware_name] = {
@@ -400,10 +423,12 @@ class Managing(Model):
                         "timeout": int(queue.get("timeout"))
                     }
                     self.return_queue["error"] = False
-                    message = "Hardware is not working, This serial number({}) is using {} now".format(tmp_sn, tmp_hardware_name)
+                    message = "Hardware is not working, This serial number({}) is using {} now".format(tmp_sn,
+                                                                                                       tmp_hardware_name)
                     self._queue_stack.get(tmp_hardware_name).remove(tmp_sn)
                 else:
-                    message = "This serial number is not first queue(on {} queue) please try again".format(tmp_queue_stack.index(tmp_sn) + 1)
+                    message = "This serial number is not first queue(on {} queue) please try again".format(
+                        tmp_queue_stack.index(tmp_sn) + 1)
             else:
                 message = "This serial number({}) is added to queue please try again".foramt(tmp_sn)
                 if not self._queue_stack.get(tmp_sn):

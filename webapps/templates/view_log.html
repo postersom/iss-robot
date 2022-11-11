@@ -73,7 +73,7 @@
 <div class="row">
     <div class="alert alert-default" role="alert">
         <h4 class="alert-heading">Testcase: {{ filename }}</h4>
-        <pre class="scrollbar2 only_sequence hide" style="white-space: pre-line; line-height: 1;">  
+        <pre class="scrollbar2 only_sequence hide" style="white-space: pre-line; line-height: 1;">
             {% for line in sequence_logs %}
             <span>{{ line }}</span>
             {% endfor %}
@@ -83,14 +83,14 @@
             <span>{{ line }}</span>
             {% endfor %}
         </pre>
-        <pre class="scrollbar hide both" style="white-space: pre-line; line-height: 1; background-color:#f5f5f5;"">
+        <pre class="scrollbar hide both" style="white-space: pre-line; line-height: 1; background-color:#f5f5f5;">
             <div class="force-overflow">
                 {% for line in sequence_logs %}
                 <span>{{ line }}</span>
                 {% endfor %}
             </div>
         </pre>
-        <pre class="scrollbar hide both" style="white-space: pre-line; line-height: 1; background-color:#e8e8e8;"">
+        <pre class="scrollbar hide both" style="white-space: pre-line; line-height: 1; background-color:#e8e8e8;">
             <div class="force-overflow">
                 {% for line in raw_logs %}
                 <span>{{ line }}</span>
@@ -127,7 +127,7 @@
             default:
                 set_only_sequence();
 }
-        
+
     });
 
     function download(filename, text) {
@@ -174,7 +174,7 @@
 
         setCookie("show_logs", "set_both", 365);
     }
-    
+
     //show only sequence logs
     function set_only_sequence() {
         console.log("Only sequence")
@@ -208,7 +208,7 @@
         $('#raw_logs').removeClass('btn-outline-primary');
         $('#raw_logs').addClass('btn-primary');
 
-        setCookie("show_logs", "set_only_raw", 365); 
+        setCookie("show_logs", "set_only_raw", 365);
     }
 
     //do not show the lgos
@@ -240,7 +240,7 @@
                         set_only_raw();
                     }
                 });
-                
+
             }
             else {
                 $.each($('#raw_logs'), function (key, value) {

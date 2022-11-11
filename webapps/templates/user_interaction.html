@@ -9,31 +9,33 @@
 
 <div class="row">
     <div class="col-md-1"><a href="/"><img src="{{ url_for('static', filename='images/ic-back.png') }}"
-                style="width:50px;height:50px;"></a></div>
+                                           style="width:50px;height:50px;"></a></div>
     <form action="" method="post" onsubmit="" id="userinteraction-form" class="form-horizontal">
         <div class="col-md-11 ">
             <div class="row">
                 <div class="testing">
                     <h3>User Interaction
                         <span
-                            class="lbstatus-md">{{ info['chassis_name']}}{{ info['slot_no'] }}</span>
+                                class="lbstatus-md">{{ info['chassis_name']}}{{ info['slot_no'] }}</span>
                     </h3>
                 </div>
-                <hr / style="border-top:2px solid #ccc">
+                <hr
+                / style="border-top:2px solid #ccc">
 
 
-                <input id="id" name="id" type="text" class="form-control hidden" value="{{ interaction['id'] }}" />
+                <input id="id" name="id" type="text" class="form-control hidden" value="{{ interaction['id'] }}"/>
                 <h2><strong>{{ interaction['title'] }}</strong></h2>
                 <pre
-                    style="font-family: inherit;background-color:#53565B;color:#fff;"><h4>{{ interaction['message']}}</h4></pre>
+                        style="font-family: inherit;background-color:#53565B;color:#fff;"><h4>{{ interaction['message']}}</h4></pre>
 
             </div>
             <div class="row content">
                 {% if interaction['picture'] and interaction['picture']|length > 0 %}
                 <div class="col-sm-6" id="interaction_image">
 
-                    <p><img src="{{ url_for('interaction_files', filepath=filepath , filename=interaction['picture']) }}"
-                            style="max-width:90%;">
+                    <p>
+                        <img src="{{ url_for('interaction_files', filepath=filepath , filename=interaction['picture']) }}"
+                             style="max-width:90%;">
                     </p>
 
                 </div>
@@ -42,10 +44,13 @@
                     <div class="form-group">
                         <div class="col-sm-12">
                             <label class="group-radio-answer radio-answer-pass"><input type="radio" id="answer-pass"
-                                    name="answer" class="form-control" value="pass"><span
+                                                                                       name="answer"
+                                                                                       class="form-control"
+                                                                                       value="pass"><span
                                     class="checkmark"></span><strong>PASS</strong> </label>
                             <label class="group-radio-answer radio-answer-fail"><input type="radio" name="answer"
-                                    class="form-control" value="fail"><span
+                                                                                       class="form-control"
+                                                                                       value="fail"><span
                                     class="checkmark"></span><strong>FAIL</strong></label>
                         </div>
                     </div>
@@ -56,7 +61,7 @@
                             <label for="operation_id" class="col-sm-3 control-label text-left">Operation ID : </label>
                             <div class="col-sm-9">
                                 <input type="text" class="form-control" id="operation_id_ui" name="operation_id"
-                                    value="" />
+                                       value=""/>
                             </div>
                         </div>
                     </div>
@@ -66,7 +71,7 @@
                         <label for="reason" class="col-sm-3 control-label text-left">Reason: </label>
                         <div class="col-sm-9">
                             <textarea class="form-control" rows="5" id="reason" name="reason" value=""
-                                disabled="disabled"></textarea>
+                                      disabled="disabled"></textarea>
                         </div>
                     </div>
 
@@ -78,7 +83,8 @@
 
         <div class="modal-btn">
             <button type="submit" id="user-interaction-submit" disabled="disabled"
-                class="btn btn-primary">Submit</button>
+                    class="btn btn-primary">Submit
+            </button>
             <button type="button" class="btn btn-default" onclick="reset()">Reset</button>
         </div>
 </div>
@@ -101,8 +107,7 @@
             if ($('input[name="answer"]:checked').val() == 'pass') {
                 $("#reason").attr("disabled", "disabled");
                 $("#reason").val('')
-            }
-            else {
+            } else {
                 $("#reason").removeAttr("disabled");
             }
         });
@@ -126,9 +131,9 @@
                 }
             },
             messages: {
-                operation_id: { required: "Please fill your id", maxlength: "no spacebar in your id" },
-                answer: { required: "Please select answer" },
-                reason: { required: "Please fill error reason" },
+                operation_id: {required: "Please fill your id", maxlength: "no spacebar in your id"},
+                answer: {required: "Please select answer"},
+                reason: {required: "Please fill error reason"},
             },
             errorElement: "em",
             errorPlacement: function (error, element) {

@@ -1,10 +1,11 @@
-class Logging():
+class Logging(object):
     def __init__(self):
         pass
 
-    def info(self, header, message):
-        print("{} Info: {}".format(header, message))
-    
-    def error(self, header, message):
-        print("{} Error with: {}".format(header, message))
-        
+    @staticmethod
+    def info(header, message):
+        print(f'{header} Info: {message}')
+
+    @staticmethod
+    def error(header, message):
+        print(f'{header} Error with: {message}')

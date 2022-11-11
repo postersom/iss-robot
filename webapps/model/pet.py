@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, DateTime
 from database import Base
 
+
 class Pet(Base):
     __tablename__ = 'pets'
     id = Column(String(20), primary_key=True)

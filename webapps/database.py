@@ -1,29 +1,25 @@
-from sqlalchemy import create_engine, Column, DateTime, String
-from sqlalchemy.orm import scoped_session, sessionmaker, relationship
-from sqlalchemy.ext.declarative import declarative_base
-from flask import current_app
-import datetime
 import os
-from os.path import join, dirname
-from dotenv import load_dotenv
+import json
 import subprocess
 
-import json
+from os.path import join, dirname
+from dotenv import load_dotenv
 
-# Create .env file path.
+from sqlalchemy import create_engine
+from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
+
+
 dotenv_path = join(dirname(__file__), '.env')
 
-# Create json file path.
 setting_json_path = join(dirname(__file__), 'setting.json')
 logop_json_path = join(dirname(__file__), 'logop.json')
 release_version_json_path = join(dirname(__file__), 'release_version.json')
 
-# Load file from the path.
 load_dotenv(dotenv_path)
 path = join(dirname(__file__), os.getenv('DATABASE'))
 engine = create_engine('sqlite:///'+path, convert_unicode=True)
-db_session = scoped_session(sessionmaker(autocommit=False, autoflush=False,
-                                         bind=engine))
+db_session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
 Base = declarative_base()
 
 
@@ -47,28 +43,29 @@ def populate():
     from model.releaseversion import ReleaseVersion
 
     try:
-        git_version = subprocess.check_output(
-            '/usr/bin/git describe --tag', cwd=dirname(__file__), shell=True).decode('utf-8').strip()
-        db_session.add(Setting(name=u'version', title=u'Version',
-                               value=git_version, categories=u'lock', order=0))
+        git_version = subprocess.check_output('/usr/bin/git describe --tag', cwd=dirname(__file__), shell=True).decode('utf-8').strip()
+        db_session.add(Setting(name=u'version',
+                               title=u'Version',
+                               value=git_version,
+                               categories=u'lock',
+                               order=0))
     except Exception as e:
         print(e)
 
-    with open(setting_json_path) as json_file:
-        json_decoded = json.load(json_file)
-        for item in json_decoded:
-            db_session.add(Setting(name=json_decoded[item]["name"], title=json_decoded[item]["title"],
-                                   value=json_decoded[item]["value"], categories=json_decoded[item]["categories"], order=json_decoded[item]["order"]))
+    with open(setting_json_path) as f:
+        data = json.load(f)
+        for item in data:
+            db_session.add(Setting(name=data[item]['name'],
+                                   title=data[item]['title'],
+                                   value=data[item]['value'],
+                                   categories=data[item]['categories'],
+                                   order=data[item]['order']))
 
-    with open(release_version_json_path) as json_file:
-        json_decoded = json.load(json_file)
-        for item in json_decoded:
-            db_session.add(ReleaseVersion(
-                location=item, value=json_decoded[item]["release_path_version"]))
+    with open(release_version_json_path) as f:
+        data = json.load(f)
+        [db_session.add(ReleaseVersion(location=i, value=data[i]['release_path_version'])) for i in data]
 
-    with open(logop_json_path) as json_file:
-        json_decoded = json.load(json_file)
-        for item in json_decoded:
-            db_session.add(Logop(name=item, order=json_decoded[item]["order"]))
-
+    with open(logop_json_path) as f:
+        data = json.load(f)
+        [db_session.add(Logop(name=i, order=data[i]['order'])) for i in data]
     db_session.commit()
