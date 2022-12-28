@@ -198,7 +198,7 @@ def scanin(body):
                 managing_model.print_log.error(log_header, f'Error with: {e}')
                 tmpReturnData['error'] = 'Error with execution ODC Script.'
         else:
-            managing_model.print_log.info(log_header, "Verify process is done.\n{}".format(result_odc_json))
+            managing_model.print_log.info(log_header, f'Verify process is done.\n{result_odc_json}')
             tmpReturnData["data"] = result_odc_json
 
         status = 200 if tmpReturnData["error"] else 400
@@ -220,7 +220,7 @@ def scanin(body):
         managing_model.print_log.info(log_header, "New sn scan-in")
         managing_model.all_sn_scaning[tmp_batch_id]["sns"].append(request_body.get("serial_number").strip())
     else:
-        tmpReturnData["error"] = "Duplicate sn scan-in: {}".format(tmp_sn)
+        tmpReturnData["error"] = f'Duplicate sn scan-in: {tmp_sn}'
         return tmpReturnData, 400
 
     # Execute ODC Script
@@ -234,8 +234,8 @@ def scanin(body):
         try:
             result_odc_json = json.loads(result_odc)
         except Exception as e:
-            managing_model.print_log.error(log_header, "Cannot create json of result from odc script with: {}".format(e))
-            tmpReturnData["error"] = "Process is not starting test when create json data from ODC script: {}".format(e)
+            managing_model.print_log.error(log_header, f'Cannot create json of result from odc script with: {e}')
+            tmpReturnData["error"] = f'Process is not starting test when create json data from ODC script: {e}'
             return json.dumps(tmpReturnData), 400
         else:
             managing_model.print_log.info(log_header, "Result from odc:\n{}".format(result_odc_json))
@@ -266,18 +266,18 @@ def scanin(body):
                                 add_testcaselist(test_case_list[test_case], request_body.get('slot_no'))
                         # use param_timestamp for the same folder name
                         add_testing(tmp_batch_id,
-                                    request_body.get("serial_number"),
-                                    "{}/{}_{}_{}.robot".format(testing_model.root_path, result_odc_json.get("part_number"), result_odc_json.get("product_reversion"), request_body.get("logop")),
-                                    request_body.get("operation_id"),
-                                    request_body.get("slot_no"), "{}_{}_{}".format(result_odc_json.get("product_id"), request_body.get("serial_number"), param_timestamp),
+                                    request_body.get('serial_number'),
+                                    f"{testing_model.root_path}/{result_odc_json.get('part_number')}_{result_odc_json.get('product_reversion')}_{request_body.get('logop')}.robot",
+                                    request_body.get('operation_id'),
+                                    request_body.get('slot_no'),
+                                    f"{result_odc_json.get('product_id')}_{request_body.get('serial_number')}_{param_timestamp}",
                                     request_body.get('test_mode'),
                                     request_body.get('code_from'),
                                     request_body.get('logop'),
                                     result_odc_json.get('product_name'))
-                        # Execute robot testing
-                        cmd = "{} -m robot {} {} {} &".format(sys.executable, parameter_robot_test, robot_name, console_log)
-                        print("cmd= {}".format(cmd))
-                        pro = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
+                        cmd = f'{sys.executable} -m robot {parameter_robot_test} {robot_name} {console_log} &'
+                        print(f'cmd= {cmd}')
+                        subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
                     except Exception as e:
                         tmpReturnData['error'] = f'Cannot add test: {e}'
                         remove_testcaselist(request_body.get('slot_no'))
