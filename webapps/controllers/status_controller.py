@@ -150,6 +150,27 @@ def view_status_rawlog(slot_no, slot, filename, info):
     return data
 
 
+def get_log_file(location, filename):
+    testing_model = Testing()
+    test = get_test_by_slot(location)
+    path = test["uut_log_dir"]
+    testing_model.root_path = test["code_from"], location
+
+
+    raw_logs_dir = "Raw_logs"
+    fullpath = os.path.join(testing_model.getLogsPath,
+                            path, raw_logs_dir, filename)
+    # print(fullpath)
+    testing_model = None
+    if not os.path.exists(fullpath):
+        data = ['File not found']
+        return data
+    else:
+        with open(fullpath, 'r', encoding="ISO-8859-1") as f:
+            data = f.readlines()
+        return data
+
+
 def view_status_sequencelog(slot_no, slot, filename, info):
     testing_model = Testing()
     test = get_test_by_slot(slot_no)

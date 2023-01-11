@@ -29,73 +29,69 @@
         clear: both;
     }
 
-    .scrollbar {
-        /* margin-left: 30px; */
-        float: left;
-        height: 600px;
-        width: 50%;
-        /* background: #F5F5F5; */
-        overflow-y: scroll;
-        margin-bottom: 25px;
+    .scrollbar{
+	    /* margin-left: 30px; */
+	    float: left;
+	    height: 600px;
+	    width: 50%;
+	    /* background: #F5F5F5; */
+	    overflow-y: scroll;
+	    margin-bottom: 25px;
     }
 
-    .scrollbar2 {
-        /* margin-left: 30px; */
-        float: left;
-        height: 600px;
-        width: 100%;
-        /* background: #F5F5F5; */
-        overflow-y: scroll;
-        margin-bottom: 25px;
+    .scrollbar2{
+	    /* margin-left: 30px; */
+	    float: left;
+	    height: 600px;
+	    width: 100%;
+	    /* background: #F5F5F5; */
+	    overflow-y: scroll;
+	    margin-bottom: 25px;
     }
+
 </style>
 <div class="row">
     <div class="col-md-1 text-center"><a href=".."><img src="{{ url_for('static', filename='images/ic-back.png') }}"
-                style="width:50px;height:50px;"></a></div>
+        style="width:50px;height:50px;"></a></div>
     <h4 class="col-md-2 form-group">
         <button type="button" class="btn btn-primary" id="sequence_logs" onclick="show_sl()" value="true">Sequence
             logs</button>
     </h4>
     <h4 class="col-md-2 form-group">
-        <button type="button" class="btn btn-outline-primary" id="raw_logs" onclick="show_rl()" value="false">Raw
-            logs</button>
+        <button type="button" class="btn btn-outline-primary" id="raw_logs" onclick="show_rl()" value="false">Raw logs</button>
     </h4>
 </div>
 <div class="row">
     <div class="col-md-1 text-center"></a></div>
     <h4 class="col-md-2 form-group">
-        <button type="button" class="btn btn-outline-primary" id="sequence_logs"
-            onclick="download{{ filename + '.txt',sequence_logs }}" value="true">Download</button>
+        <button type="button" class="btn btn-outline-primary" id="sequence_logs" onclick="download{{ filename + '.txt',sequence_logs }}" value="true">Download</button>
     </h4>
     <h4 class="col-md-2 form-group">
-        <button type="button" class="btn btn-outline-primary" id="raw_logs"
-            onclick="download{{ filename + '.raw',raw_logs }}" value="false">Download</button>
+        <button type="button" class="btn btn-outline-primary" id="raw_logs" onclick="download{{ filename + '.raw',raw_logs }}" value="false">Download</button>
     </h4>
 </div>
 <div class="row">
     <div class="alert alert-default" role="alert">
         <h4 class="alert-heading">Testcase: {{ filename }}</h4>
-        <pre class="scrollbar2 only_sequence hide" style="white-space: pre-line; line-height: 0.65;">
+        <pre class="scrollbar2 only_sequence hide" style="white-space: pre-line; line-height: 0.3;" id="sequence_log_content_1">
             {% for line in sequence_logs %}
             <span>{{ line }}</span>
             {% endfor %}
         </pre>
-        <pre class="scrollbar2 only_raw hide" style="white-space: pre-line; line-height: 0.65;">
+        <pre class="scrollbar2 only_raw hide" style="white-space: pre-line; line-height: 0.3;" id="log_raw_content_1">
             {% for line in raw_logs %}
             <span>{{ line }}</span>
             {% endfor %}
         </pre>
-        <pre class="scrollbar hide both sequenceLogs"
-            style="white-space: pre-line; line-height: 0.65; background-color:#f5f5f5;">
-            <div class=" force-overflow">
+        <pre class="scrollbar hide both sequenceLogs" style="white-space: pre-line; line-height: 0.3; background-color:#f5f5f5;"">
+            <div class="force-overflow" id="sequence_log_content">
                 {% for line in sequence_logs %}
                 <span>{{ line }}</span>
                 {% endfor %}
             </div>
         </pre>
-        <pre class="scrollbar hide both rawLogs"
-            style="white-space: pre-line; line-height: 0.65; background-color:#e8e8e8;">
-            <div class=" force-overflow">
+        <pre class="scrollbar hide both rawLogs" style="white-space: pre-line; line-height: 0.3; background-color:#e8e8e8;"">
+            <div class="force-overflow" id="log_raw_content">
                 {% for line in raw_logs %}
                 <span>{{ line }}</span>
                 {% endfor %}
@@ -112,11 +108,10 @@
 <script type="text/javascript">
 
     $(function () {
-
         var both = getCookie("show_logs");
         console.log(both)
 
-        switch (both) {
+        switch(both) {
             case "set_both":
                 set_both();
                 break;
@@ -131,7 +126,8 @@
                 break;
             default:
                 set_only_sequence();
-        }
+}
+        
     });
 
     function download(filename, text) {
@@ -176,13 +172,9 @@
         $('#raw_logs').removeClass('btn-outline-primary');
         $('#raw_logs').addClass('btn-primary');
 
-        // textarea auto scroll to bottom by Warunchit B.
-        $('.sequenceLogs').scrollTop($('.sequenceLogs')[0].scrollHeight);
-        $('.rawLogs').scrollTop($('.rawLogs')[0].scrollHeight);
-
         setCookie("show_logs", "set_both", 365);
     }
-
+    
     //show only sequence logs
     function set_only_sequence() {
         console.log("Only sequence")
@@ -192,16 +184,13 @@
 
         $('#sequence_logs').val('true');
         $('#sequence_logs').removeClass('btn-outline-primary');
-        $('#sequence_logs').addClass('btn-primary')
+        $('#sequence_logs').addClass('btn-primary');
 
         $('#raw_logs').val('false');
         $('#raw_logs').removeClass('btn-primary');
         $('#raw_logs').addClass('btn-outline-primary');
 
         setCookie("show_logs", "set_only_sequence", 365);
-
-        // textarea auto scroll to bottom by Warunchit B.
-        $('.only_sequence').scrollTop($('.only_sequence')[0].scrollHeight);
     }
 
     //show only raw logs
@@ -220,9 +209,6 @@
         $('#raw_logs').addClass('btn-primary');
 
         setCookie("show_logs", "set_only_raw", 365);
-
-        // textarea auto scroll to bottom by Warunchit B.
-        $('.only_raw').scrollTop($('.only_raw')[0].scrollHeight);
     }
 
     //do not show the lgos
@@ -254,6 +240,7 @@
                         set_only_raw();
                     }
                 });
+                
             }
             else {
                 $.each($('#raw_logs'), function (key, value) {
@@ -292,6 +279,58 @@
             }
         });
     }
+
+    function stop_interval(response) {
+        if (response == 'END') {
+                clearInterval(display_text);
+            }
+    }
+
+    jQuery(document).ready(function () {
+        var $url_raw = window.location.protocol + "//" + window.location.host + "/get/log/?location={{location}}&filename={{filename}}&log_type=raw"
+        var $url_sequence = window.location.protocol + "//" + window.location.host + "/get/log/?location={{location}}&filename={{filename}}&log_type=sequence"
+        var $url_status = window.location.protocol + "//" + window.location.host + "/get/status/?slot_no={{location}}&test_case_name={{filename}}"
+        display_text();
+        const myInterval = setInterval(display_text,1000);
+        function display_text() {
+            $.ajax({ type: "GET",
+                     url: $url_raw,
+                     async: false,
+                     success : function(text)
+                     {
+                         response = text;
+                         $('#log_raw_content').html(response);
+                         $('#log_raw_content_1').html(response);
+                     }
+            });
+            $.ajax({ type: "GET",
+                     url: $url_sequence,
+                     async: false,
+                     success : function(text)
+                     {
+                         response = text;
+                         $('#sequence_log_content').html(response);
+                         $('#sequence_log_content_1').html(response);
+                     }
+            });
+            $.ajax({ type: "GET",
+                        url: $url_status,
+                        async: false,
+                        success : function(data, textStatus, text)
+                        {
+                            response = text.responseText;
+                            parser = new DOMParser();
+                            doc = parser.parseFromString(response, "text/html");
+                            result = doc.body.textContent
+                            if (result == 'END') {
+                                clearInterval(myInterval);
+                            }
+                        }
+            });
+            $('.rawLogs').scrollTop( $('.rawLogs')[0].scrollHeight );
+            $('.sequenceLogs').scrollTop( $('.sequenceLogs')[0].scrollHeight );
+        }
+    });
 
 </script>
 {% endblock %}

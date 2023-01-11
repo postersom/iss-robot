@@ -655,11 +655,12 @@ def show_status_log(slot_no=None, slot=None, filename=None):
         elif item['name'] == 'station':
             settings_info['station'] = item['value']
     info = {'chassis_name': get_setting_by_name('chassis_name')['value']}
-    return render_template('view_log.html',
+    return render_template('view_live_log.html',
                            raw_logs=view_status_rawlog(slot_no, slot, filename, info),
                            sequence_logs=view_status_sequencelog(slot_no, slot, filename, info),
                            filename=filename,
-                           block_title=f"{settings_info['product_name']}_{settings_info['station']}")
+                           block_title=f"{settings_info['product_name']}_{settings_info['station']}",
+			   location=slot_no)
 
 
 @app.route('/userinteraction/<string:slot_no>/')
@@ -1107,6 +1108,61 @@ def distribution_home(form_data=None):
 
     return render_template('distribution_home.html', form_data=data, slot=slot, slot_status=slot_status,
                            station=info['station'], len1=len(slot), len2=len(slot_status), block_title=block_title)
+
+
+# Add Get Log Raw
+@app.route('/get/log/', methods=['GET'])
+def request_log_raw(form_data=None):
+    if form_data:
+        data = form_data
+    else:
+        data = {}
+
+    try:
+        location = request.args['location']
+        filename = request.args['filename']
+        log_type = request.args['log_type']
+    except:
+        print("Cannot get parameter")
+
+    if 'raw' == log_type:
+        logs = get_log_file(location, filename + '.raw')
+    elif 'sequence' == log_type:
+        logs = get_log_file(location, filename + '.txt')
+
+    block_title="GET LOG API"
+    return render_template('get_log.html', form_data=data, block_title=block_title, logs=logs)
+
+
+# Add Get Status
+@app.route('/get/status/', methods=['GET'])
+def request_status(form_data=None):
+    if form_data:
+        data = form_data
+    else:
+        data = {}
+
+    try:
+        slot_no = request.args['slot_no']
+        test_case_name = request.args['test_case_name']
+    except:
+        print("Cannot get parameter")
+
+    raw_statuses = get_status_by_slot(slot_no)
+
+    result = 'TESTING'
+    found_target_test_case = False
+    info = {'result': "testing", 'slot_no': slot_no}
+    if len(raw_statuses) == 0:
+        abort(404)
+    for index, item in enumerate(raw_statuses):
+        if item["status"] == 'start_test' and item["message"] == test_case_name:
+            found_target_test_case = True
+        elif item["status"] == 'end_test' and found_target_test_case:
+            result = 'END'
+
+    block_title="GET STATUS API"
+    return render_template('get_status.html', form_data=data, block_title=block_title, logs=result)
 
 
 @app.route('/distribution/put_release/', methods=['GET'])
